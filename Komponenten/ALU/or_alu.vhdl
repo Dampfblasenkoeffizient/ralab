@@ -1,8 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use work.constant_package.all;
 
-entity or_alu is
+entity or_alu is generic(DATA_WIDTH_GEN);
     port(
         pi_opa       : in  std_logic_vector(DATA_WIDTH_GEN - 1 downto 0);
         pi_opb       : in  std_logic_vector(DATA_WIDTH_GEN - 1 downto 0);
