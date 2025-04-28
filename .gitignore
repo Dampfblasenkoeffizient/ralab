@@ -1,3 +1,4 @@
 #ignore workbench files
 *.cf
 *.o
+*.exe
