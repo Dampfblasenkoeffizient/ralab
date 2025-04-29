@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 
 entity gen_mux is 
     generic (
-        dataWidth : integer := 8;
+        dataWidth : integer := 8
     );
     port (
         pi_sel : in std_logic;
@@ -14,8 +14,13 @@ entity gen_mux is
     );
 end gen_mux;    
 
-architecture behavior of gen_mux is begin
-    if (pi_sel = "0") then
-        po_res <= pi_first;
-    else po_res <= pi_second;    
+architecture behavior of gen_mux is 
+begin
+    process(pi_first, pi_second, pi_sel)
+    begin
+        if pi_sel = '0' then
+            po_res <= pi_first;
+        else po_res <= pi_second;  
+        end if;
+    end process; 
 end architecture;    
