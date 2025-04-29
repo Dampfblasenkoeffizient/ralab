@@ -15,9 +15,9 @@ architecture behavior of PipelineRegister_tb is
             po_data : out std_logic_vector ((registerWidth -1) downto 0)
         ); 
     end component;
-    constant REGISTERWIDTH : integer := 8;
+    variable REGISTERWIDTH : integer := 8;
     signal pi_clk, pi_rst : std_logic;
-    signal pi_data, po_data: std_logic_vector ((REGISTERWIDTH -1) downto 0); -- registerwidth konst hier
+    signal pi_data, po_data: std_logic_vector ((REGISTERWIDTH -1) downto 0); -- registerwidth var hier
 
     begin
         uut : PipelineRegister port map (
@@ -28,5 +28,6 @@ architecture behavior of PipelineRegister_tb is
         );
 
         -- wie?
+        -- testen für REGISTERWIDTH 5, 6, 8, 16, 32
 
 end behavior;    
