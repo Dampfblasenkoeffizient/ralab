@@ -39,10 +39,10 @@ begin
   lu1 : entity work.my_alu
     generic map (DATA_WIDTH_GEN, ALU_OPCODE_WIDTH)
     port map (
-      pi_op1       => s_op1,
-      pi_op2       => s_op2,
-      pi_aluOp     => s_luOp,
-      po_aluOut    => s_luOut,
+      pi_opa       => s_op1,
+      pi_opb       => s_op2,
+      pi_opcode     => s_luOp,
+      po_result    => s_luOut,
       po_carryOut  => s_carryOut
     );
 
