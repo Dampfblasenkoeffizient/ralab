@@ -41,7 +41,7 @@ begin
     port map (
       pi_opa       => s_op1,
       pi_opb       => s_op2,
-      pi_opcode     => s_luOp,
+      pi_opcode    => s_luOp,
       po_result    => s_luOut,
       po_carryOut  => s_carryOut
     );

@@ -1,7 +1,14 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
---use work.constant_package.all;
+use work.constant_package.AND_ALU_OP;
+use work.constant_package.XOR_ALU_OP;
+use work.constant_package.OR_ALU_OP;
+use work.constant_package.SLL_ALU_OP;
+use work.constant_package.SRL_ALU_OP;
+use work.constant_package.SRA_ALU_OP;
+use work.constant_package.ADD_ALU_OP;
+use work.constant_package.SUB_ALU_OP;
 
 
 entity my_alu is generic(
@@ -97,21 +104,15 @@ architecture my_alu_arch of my_alu is
     add_alu_inst : entity work.add_alu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_add_result, s_carry);
     sub_alu_inst : entity work.sub_alu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_sub_result, s_carry);
 
-        process(pi_opcode)
-        variable v_opcode : std_logic_vector(G_ALU_OPCODE_WIDTH - 1 downto 0) := pi_opcode; --not static enough :( 
-        begin 
-            case v_opcode is
-                when AND_ALU_OP => po_result <= s_and_result;
-                when OR_ALU_OP => po_result <= s_or_result;
-                when XOR_ALU_OP => po_result <= s_xor_result;
-                when SLL_ALU_OP => po_result <= s_sll_result;
-                when SRL_ALU_OP => po_result <= s_srl_result;
-                when SRA_ALU_OP => po_result <= s_sra_result;
-                when ADD_ALU_OP => po_result <= s_add_result;
-                when SUB_ALU_OP => po_result <= s_sub_result;
-                when others => po_result <= (others => '0');
-            end case;
-            po_carryOut <= s_carry;
-        end process;
+    po_result <= s_and_result when pi_opcode = AND_ALU_OP else
+                 s_or_result  when pi_opcode = OR_ALU_OP else
+                 s_xor_result when pi_opcode = XOR_ALU_OP else
+                 s_sll_result when pi_opcode = SLL_ALU_OP else
+                 s_srl_result when pi_opcode = SRL_ALU_OP else
+                 s_sra_result when pi_opcode = SRA_ALU_OP else
+                 s_add_result when pi_opcode = ADD_ALU_OP else
+                 s_sub_result when pi_opcode = SUB_ALU_OP else
+                 (others => '0');
+    po_carryOut <= s_carry;
 end architecture my_alu_arch;
     
