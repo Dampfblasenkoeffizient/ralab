@@ -39,7 +39,7 @@ architecture behavior of gen_mux_tb is
                 report "Mux output with width " & integer'image(REGISTERWIDTH_PRESETS(i)) & "does not match inpu21"
                 severity error;
 
-                report "test " & integer'image(REGISTERWIDTH_PRESETS(i)) & "bit 2to1 mux";
+                report "test " & integer'image(REGISTERWIDTH_PRESETS(i)) & "bit 2to1 mux finished successfully";
                 wait; 
             end process;
         end generate;
