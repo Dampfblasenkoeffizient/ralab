@@ -18,5 +18,4 @@ architecture add_alu_arch of add_alu is
         add_net : for i in 0 to DATA_WIDTH_GEN - 1 generate
            adder : entity work.fadd port map (pi_opa(i), pi_opb(i), s_carry(i), po_out(i), s_carry(i + 1));
         end generate;
-        po_carry <= s_carry(DATA_WIDTH_GEN);
 end architecture add_alu_arch;
