@@ -1,0 +1,235 @@
+$date
+  Wed Apr 30 16:50:51 2025
+$end
+$version
+  GHDL v0
+$end
+$timescale
+  1 fs
+$end
+$scope module standard $end
+$upscope $end
+$scope module std_logic_1164 $end
+$upscope $end
+$scope module pipelineregister_tb $end
+$scope module test_register(0) $end
+$var reg 1 ! s_clk $end
+$var reg 1 " s_rst $end
+$var reg 5 # s_i_data[4:0] $end
+$var reg 5 $ s_o_data[4:0] $end
+$scope module variable_testr $end
+$var reg 1 % pi_clk $end
+$var reg 1 & pi_rst $end
+$var reg 5 ' pi_data[4:0] $end
+$var reg 5 ( po_data[4:0] $end
+$upscope $end
+$upscope $end
+$scope module test_register(1) $end
+$var reg 1 ) s_clk $end
+$var reg 1 * s_rst $end
+$var reg 6 + s_i_data[5:0] $end
+$var reg 6 , s_o_data[5:0] $end
+$scope module variable_testr $end
+$var reg 1 - pi_clk $end
+$var reg 1 . pi_rst $end
+$var reg 6 / pi_data[5:0] $end
+$var reg 6 0 po_data[5:0] $end
+$upscope $end
+$upscope $end
+$scope module test_register(2) $end
+$var reg 1 1 s_clk $end
+$var reg 1 2 s_rst $end
+$var reg 8 3 s_i_data[7:0] $end
+$var reg 8 4 s_o_data[7:0] $end
+$scope module variable_testr $end
+$var reg 1 5 pi_clk $end
+$var reg 1 6 pi_rst $end
+$var reg 8 7 pi_data[7:0] $end
+$var reg 8 8 po_data[7:0] $end
+$upscope $end
+$upscope $end
+$scope module test_register(3) $end
+$var reg 1 9 s_clk $end
+$var reg 1 : s_rst $end
+$var reg 16 ; s_i_data[15:0] $end
+$var reg 16 < s_o_data[15:0] $end
+$scope module variable_testr $end
+$var reg 1 = pi_clk $end
+$var reg 1 > pi_rst $end
+$var reg 16 ? pi_data[15:0] $end
+$var reg 16 @ po_data[15:0] $end
+$upscope $end
+$upscope $end
+$scope module test_register(4) $end
+$var reg 1 A s_clk $end
+$var reg 1 B s_rst $end
+$var reg 32 C s_i_data[31:0] $end
+$var reg 32 D s_o_data[31:0] $end
+$scope module variable_testr $end
+$var reg 1 E pi_clk $end
+$var reg 1 F pi_rst $end
+$var reg 32 G pi_data[31:0] $end
+$var reg 32 H po_data[31:0] $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+1!
+1"
+b00000 #
+b00000 $
+1%
+1&
+b00000 '
+b00000 (
+1)
+1*
+b000000 +
+b000000 ,
+1-
+1.
+b000000 /
+b000000 0
+11
+12
+b00000000 3
+b00000000 4
+15
+16
+b00000000 7
+b00000000 8
+19
+1:
+b0000000000000000 ;
+b0000000000000000 <
+1=
+1>
+b0000000000000000 ?
+b0000000000000000 @
+1A
+1B
+b00000000000000000000000000000000 C
+b00000000000000000000000000000000 D
+1E
+1F
+b00000000000000000000000000000000 G
+b00000000000000000000000000000000 H
+#20000000
+0!
+0"
+0%
+0&
+0)
+0*
+0-
+0.
+01
+02
+05
+06
+09
+0:
+0=
+0>
+0A
+0B
+0E
+0F
+#40000000
+1!
+1%
+1)
+1-
+11
+15
+19
+1=
+1A
+1E
+#60000000
+0!
+0%
+0)
+0-
+01
+05
+09
+0=
+0A
+0E
+#80000000
+1!
+b11111 #
+b11111 $
+1%
+b11111 '
+b11111 (
+1)
+b111111 +
+b111111 ,
+1-
+b111111 /
+b111111 0
+11
+b11111111 3
+b11111111 4
+15
+b11111111 7
+b11111111 8
+19
+b1111111111111111 ;
+b1111111111111111 <
+1=
+b1111111111111111 ?
+b1111111111111111 @
+1A
+b11111111111111111111111111111111 C
+b11111111111111111111111111111111 D
+1E
+b11111111111111111111111111111111 G
+b11111111111111111111111111111111 H
+#100000000
+1"
+b00000 $
+1&
+b00000 (
+1*
+b000000 ,
+1.
+b000000 0
+12
+b00000000 4
+16
+b00000000 8
+1:
+b0000000000000000 <
+1>
+b0000000000000000 @
+1B
+b00000000000000000000000000000000 D
+1F
+b00000000000000000000000000000000 H
+#120000000
+0!
+0%
+0)
+0-
+01
+05
+09
+0=
+0A
+0E
+#140000000
+1!
+1%
+1)
+1-
+11
+15
+19
+1=
+1A
+1E
+#160000000

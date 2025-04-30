@@ -25,63 +25,6 @@ entity my_alu is generic(
 end my_alu;
 
 architecture my_alu_arch of my_alu is
---    component and_alu
---            pi_opa       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---            pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---            po_out       : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0)
---        );
---    end component;
---    component or_alu
---        port(
---            pi_opa       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---            pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---            po_out       : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0)
---        );
---    end component;
---    component xor_alu
---        port(
---            pi_opa       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---            pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---            po_out       : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0)
---        );
---    end component;
---    component sll_alu
---    port(
---        pi_opa       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        po_out       : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0)
---    );
---    end component;
---    component srl_alu
---    port(
---        pi_opa       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        po_out       : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0)
---    );
---    end component;
---    component sra_alu
---    port(
---        pi_opa       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        po_out       : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0)
---    );
---    end component;
---    component add_alu
---    port(
---        pi_opa       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        po_out       : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        po_carry     : out std_logic
---    );
---    end component;
---    component sub_alu
---    port(
---        pi_opa       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        po_out       : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
---        po_carry     : out std_logic
---    );
---    end component;
 
     signal s_and_result : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
     signal s_or_result  : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);

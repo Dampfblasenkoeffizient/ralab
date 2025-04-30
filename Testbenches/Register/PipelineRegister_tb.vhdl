@@ -14,6 +14,7 @@ architecture behavior of PipelineRegister_tb is
     test_register : for i in 0 to 4 generate
         signal s_clk, s_rst : std_logic;
         signal s_i_data, s_o_data : std_logic_vector (REGISTERWIDTH_PRESETS(i) - 1 downto 0);
+        constant s_zero : std_logic_vector (REGISTERWIDTH_PRESETS(i) - 1 downto 0) := (others => '0');
         begin
     
             variable_testr : entity work.PipelineRegister generic map(REGISTERWIDTH_PRESETS(i)) port map (s_clk, s_rst, s_i_data, s_o_data);
@@ -23,7 +24,7 @@ architecture behavior of PipelineRegister_tb is
                 report "test " & integer'image(REGISTERWIDTH_PRESETS(i)) & "bit pipeline register start";
 
                 -- initialize
-
+                s_i_data <= s_zero;
                 s_rst <= '1';
                 s_clk <= '1';
                 wait for 20 ns;
@@ -46,13 +47,27 @@ architecture behavior of PipelineRegister_tb is
 
                 -- load all 1
 
-                s_i_data <= (others => '0');
+                s_i_data <= (others => '1');
                 s_clk <= '1';
                 wait for 20 ns;
                 assert s_o_data = s_i_data
                 report "Register output with width " & integer'image(REGISTERWIDTH_PRESETS(i)) & "does not match input"
                 severity error;
 
+                s_rst <= '1';
+                wait for 20 ns;
+                assert s_o_data = s_zero;
+                report "Register output with width " & integer'image(REGISTERWIDTH_PRESETS(i)) & "does not reset"
+                severity error;
+
+                
+                s_clk <= '0';
+                wait for 20 ns;
+                s_clk <= '1';
+                wait for 20 ns;
+                assert s_o_data = s_zero;
+                report "Register output with width " & integer'image(REGISTERWIDTH_PRESETS(i)) & "does not stay reset"
+                severity error;
                 -- test completed
 
                 report "test " & integer'image(REGISTERWIDTH_PRESETS(i)) & "bit pipeline register success";
