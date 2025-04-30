@@ -1,3 +1,6 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
 entity fadd is 
     port(
         pi_opa       : in  std_logic;
