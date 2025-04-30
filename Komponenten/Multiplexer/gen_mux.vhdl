@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 
 entity gen_mux is 
     generic (
-        dataWidth : integer := 8
+        dataWidth : integer
     );
     port (
         pi_sel : in std_logic;

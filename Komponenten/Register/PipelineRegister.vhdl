@@ -4,7 +4,6 @@ use ieee.std_logic_1164.all;
 entity PipelineRegister is
     generic (
         registerWidth : integer
-        -- anfangswert : std_logic_vector((registerWidth-1) downto 0) := (others => '0');
     );
     port (
         pi_clk, pi_rst : in std_logic;
