@@ -19,10 +19,10 @@ architecture sra_alu_arch of sra_alu is
             v_opb := to_integer(unsigned(pi_opb));
             v_sign := pi_opa(DATA_WIDTH_GEN - 1);
             for i in 0 to DATA_WIDTH_GEN - 2 loop
-                if i > DATA_WIDTH_GEN - v_opb then
-                    po_out(i) <= '0';
+                if i > DATA_WIDTH_GEN - v_opb - 2 then
+                    po_out(i) <= v_sign;
                 else
-                    po_out(i) <= pi_opa(i + v_opb - 1);
+                    po_out(i) <= pi_opa(i + v_opb);
                 end if;
             end loop;
             po_out(DATA_WIDTH_GEN - 1) <= v_sign;

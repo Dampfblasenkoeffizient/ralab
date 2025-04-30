@@ -17,7 +17,7 @@ architecture srl_alu_arch of srl_alu is
         begin
             v_opb := to_integer(unsigned(pi_opb));
             for i in 0 to DATA_WIDTH_GEN - 1 loop
-                if i > DATA_WIDTH_GEN - v_opb then
+                if i > DATA_WIDTH_GEN - v_opb - 1 then
                     po_out(i) <= '0';
                 else
                     po_out(i) <= pi_opa(i + v_opb);
