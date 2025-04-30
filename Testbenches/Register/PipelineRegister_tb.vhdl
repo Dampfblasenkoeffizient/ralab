@@ -1,3 +1,5 @@
+-- by Paul Riedel
+
 library ieee;
 use ieee.std_logic_1164.all;
 
@@ -56,7 +58,7 @@ architecture behavior of PipelineRegister_tb is
 
                 s_rst <= '1';
                 wait for 20 ns;
-                assert s_o_data = s_zero;
+                assert s_o_data = s_zero
                 report "Register output with width " & integer'image(REGISTERWIDTH_PRESETS(i)) & "does not reset"
                 severity error;
 
@@ -65,12 +67,12 @@ architecture behavior of PipelineRegister_tb is
                 wait for 20 ns;
                 s_clk <= '1';
                 wait for 20 ns;
-                assert s_o_data = s_zero;
+                assert s_o_data = s_zero
                 report "Register output with width " & integer'image(REGISTERWIDTH_PRESETS(i)) & "does not stay reset"
                 severity error;
                 -- test completed
 
-                report "test " & integer'image(REGISTERWIDTH_PRESETS(i)) & "bit pipeline register success";
+                report "test done";
                 wait; 
             end process;
         end generate;
