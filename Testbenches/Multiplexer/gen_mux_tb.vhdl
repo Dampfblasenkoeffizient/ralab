@@ -26,7 +26,7 @@ architecture behavior of gen_mux_tb is
                 s_first <= (others => '0');
                 s_second <= (others => '1');
                 wait for 20 ns;
-                assert (s_res = s_first)
+                assert (s_res = s_first) and not(s_res = s_second)
                 report "Mux output with width " & integer'image(REGISTERWIDTH_PRESETS(i)) & "does not match input1"
                 severity error;
 
@@ -36,7 +36,7 @@ architecture behavior of gen_mux_tb is
                 s_first <= (others => '0');
                 s_second <= (others => '1');
                 wait for 20 ns;
-                assert (s_res = s_second)
+                assert (s_res = s_second) and not(s_res = s_first)
                 report "Mux output with width " & integer'image(REGISTERWIDTH_PRESETS(i)) & "does not match inpu21"
                 severity error;
 
