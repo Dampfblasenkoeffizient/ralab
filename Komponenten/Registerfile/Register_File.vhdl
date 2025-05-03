@@ -7,7 +7,7 @@ entity register_file is
         pi_clk, pi_rst, pi_writeEnable : in std_logic;
         pi_writeRegData : in std_logic_vector ((WORD_WIDTH -1) downto 0);
         pi_readRegAddr1, pi_readRegAddr2, pi_writeRegAddr : in std_logic_vector ((REG_ADR_WIDTH -1) downto 0);
-        po_readRegData1, po_readRegData2 : out std_logic_vector ((REG_ADR_WIDTH -1) downto 0)
+        po_readRegData1, po_readRegData2 : out std_logic_vector ((WORD_WIDTH -1) downto 0)
     );
 end register_file;
 
@@ -16,7 +16,6 @@ architecture behaviour of register_file is
 begin
         s_write <= pi_writeRegData when pi_writeEnable = '1';
         registers : for i in 0 to 2 ** REG_ADR_WIDTH generate
-        begin 
                 reg : entity work.addressable_register generic map(WORD_WIDTH, REG_ADR_WIDTH, i) port map(pi_clk, pi_rst, s_write, pi_readRegAddr1, pi_readRegAddr2, pi_writeRegAddr, po_readRegData1, po_readRegData2);
         end generate;
 end architecture;
