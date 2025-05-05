@@ -23,6 +23,7 @@ architecture behavior of Single_Port_RAM_tb is
                 clk <= '1';
                 wait for 10 ns;    
             end loop;
+            wait;
         end process;
 
         process
