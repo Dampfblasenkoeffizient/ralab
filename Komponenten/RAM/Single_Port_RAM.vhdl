@@ -19,7 +19,7 @@ entity Single_Port_RAM is
 end entity;    
 
 architecture behavior of Single_Port_RAM is
-    type memory is array (0 to 4) of std_logic_vector (WORD_WIDTH -1 downto 0); 
+    type memory is array (0 to 2 ** 16 -1) of std_logic_vector (WORD_WIDTH -1 downto 0); 
     signal regs : memory := (others => (others => '0'));
     
     begin
