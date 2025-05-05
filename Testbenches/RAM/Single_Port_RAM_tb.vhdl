@@ -7,7 +7,7 @@ entity Single_Port_RAM_tb is begin end;
 architecture behavior of Single_Port_RAM_tb is
     signal clk : std_logic;
     signal rst : std_logic;
-    signal add : std_logic_vector(0 to 3);
+    signal add : std_logic_vector(0 to 4); -- reg_adr_width = 5
     signal data_in :  std_logic_vector(15 downto 0);
     signal we : std_logic;
     signal data_out : std_logic_vector(15 downto 0);
@@ -29,17 +29,17 @@ architecture behavior of Single_Port_RAM_tb is
             --writing
             report "writing test starts";
             rst <= '0';
-            add <= '0';
+            add <= (others => '0');
             we <= '1';
             data_in <= (others => '1');
             wait for 20 ns;
 
-            assert data_out = (others => '1')
+            assert data_out = data_in;
             report "failure to write" 
             severity error;
 
             we <= '0';
-            data_in <= (1,1,0, others => '1');
+            add(0) <= '1';
             wait for 20 ns;
 
             assert data_out /= data_in 
