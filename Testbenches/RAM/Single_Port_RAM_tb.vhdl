@@ -28,9 +28,27 @@ architecture behavior of Single_Port_RAM_tb is
 
             --writing
             report "writing test starts";
-            rst <= 0;
-            add <= 0;
-            data_in <= ();
+            rst <= '0';
+            add <= '0';
+            we <= '1';
+            data_in <= (others => '1');
+            wait for 20 ns;
+
+            assert data_out = (others => '1')
+            report "failure to write" 
+            severity error;
+
+            we <= '0';
+            data_in <= (1,1,0, others => '1');
+            wait for 20 ns;
+
+            assert data_out /= data_in 
+            report "wrote while writing flag not set"
+            severity error;
+
+            
+
+
             
 
 
