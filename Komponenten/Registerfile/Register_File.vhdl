@@ -13,9 +13,14 @@ end register_file;
 
 architecture behaviour of register_file is 
     signal s_write : std_logic_vector (WORD_WIDTH - 1 downto 0);
+    signal s_zeros : std_logic_vector (REG_ADR_WIDTH - 1 downto 0);
 begin
         s_write <= pi_writeRegData when pi_writeEnable = '1';
-        registers : for i in 0 to 2 ** REG_ADR_WIDTH generate
+        po_readRegData1 <= (others => '0') when pi_readRegAddr1 = s_zeros and rising_edge(pi_clk) else 
+                    (others => 'Z');
+        po_readRegData2 <= (others => '0') when pi_readRegAddr2 = s_zeros and rising_edge(pi_clk) else 
+                    (others => 'Z');
+        registers : for i in 1 to 2 ** REG_ADR_WIDTH generate
                 reg : entity work.addressable_register generic map(WORD_WIDTH, REG_ADR_WIDTH, i) port map(pi_clk, pi_rst, s_write, pi_readRegAddr1, pi_readRegAddr2, pi_writeRegAddr, po_readRegData1, po_readRegData2);
         end generate;
 end architecture;

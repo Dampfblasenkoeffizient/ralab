@@ -40,61 +40,69 @@ begin
             process
                 variable v_test_value1 : std_logic_vector(WORD_WIDTH_PRESETS(i) - 1 downto 0) := (5 downto 0 => '1', others => '0');
                 variable v_test_value2 : std_logic_vector(WORD_WIDTH_PRESETS(i) - 1 downto 0) := (7 downto 0 => '1', others => '0');
-                variable v_zeros : std_logic_vector(WORD_WIDTH_PRESETS(i) - 1 downto 0) := (others => '0');
+                variable v_zeros : std_logic_vector(WORD_WIDTH_PRESETS(i) - 1 downto 0) := (others => 'L');
             begin
             -- init
 
                 report "starting test";
 
+                v_out_readRegData1 <= (others => 'L');
+                v_out_readRegData2 <= (others => 'L');
+
                 v_clk <= '0';
                 v_rst <= '1';
                 v_writeEnable <= '1';
-                wait for 1 ns;
+                wait for 1 fs;
+                v_rst <= '0';
+                
 
             -- load test values
 
                 v_writeRegAddr <= "0010";
                 v_writeRegData <= v_test_value1;
+                wait for 1 fs;
                 v_clk <= '1';
-                wait for 1 ns;
+                wait for 1 fs;
                 v_clk <= '0';
-                wait for 1 ns;
                 v_writeRegAddr <= "0011";
                 v_writeRegData <= v_test_value2;
+                wait for 1 fs;
                 v_clk <= '1';
-                wait for 1 ns;
+                wait for 1 fs;
                 v_clk <= '0';
                 v_writeEnable <= '0';
-                wait for 1 ns;
+                wait for 1 fs;
 
             -- test output values
 
                 v_readRegAddr1 <= "0010";
                 v_readRegAddr2 <= "0011";
+                wait for 1 fs;
                 v_clk <= '1';    
-                wait for 1 ns;
+                wait for 1 fs;
                 assert v_out_readRegData1 = v_test_value1 and v_out_readRegData2 = v_test_value2
                 report "test values where not retrieved correctly"
                 severity error;
                 v_clk <= '0';
-                wait for 1 ns;
+                wait for 1 fs;
 
             -- test same address access
 
                 v_readRegAddr1 <= "0010";
                 v_readRegAddr2 <= "0010";
+                wait for 1 fs;
                 v_clk <= '1';    
-                wait for 1 ns;
+                wait for 1 fs;
                 assert v_out_readRegData1 = v_test_value1 and v_out_readRegData2 = v_test_value1
                 report "test values where not retrieved correctly when read addresses are the same"
                 severity error;
                 v_clk <= '0';
-                wait for 1 ns;
+                wait for 1 fs;
 
             -- test reset
 
                 v_rst <= '1';    
-                wait for 1 ns;
+                wait for 1 fs;
                 assert v_out_readRegData1 = v_zeros and v_out_readRegData2 = v_zeros
                 report "reset does not work"
                 severity error;
@@ -103,15 +111,34 @@ begin
 
                 v_writeRegAddr <= "0010";
                 v_writeRegData <= v_test_value1;
+                wait for 1 fs;
                 v_clk <= '1';
-                wait for 1 ns;
+                wait for 1 fs;
                 v_clk <= '0'; 
                 v_readRegAddr1 <= "0010";
-                wait for 1 ns;
+                wait for 1 fs;
                 v_clk <= '1';
                 assert v_out_readRegData1 = v_zeros
                 report "write works without write enable"
                 severity error;   
+                wait for 1 fs;
+
+            -- test zero register
+
+                v_writeEnable <= '1';
+                v_writeRegAddr <= "0000";
+                v_writeRegData <= v_test_value1;
+                wait for 1 fs;
+                v_clk <= '1';
+                wait for 1 fs;
+                v_clk <= '0'; 
+                v_readRegAddr1 <= "0000";
+                wait for 1 fs;
+                v_clk <= '1';
+                assert v_out_readRegData1 = v_zeros
+                report "R0 does not return 0"
+                severity error;
+                wait for 1 fs;
 
                 report "test finished";
                 wait;

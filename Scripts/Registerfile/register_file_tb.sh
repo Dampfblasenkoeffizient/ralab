@@ -9,4 +9,5 @@ ghdl -a Testbenches/Registerfile/register_file_tb.vhdl
 
 ghdl -e register_file_tb
 
-ghdl -r register_file_tb
+ghdl -r register_file_tb --vcd=reg.vcd
+gtkwave reg.vcd

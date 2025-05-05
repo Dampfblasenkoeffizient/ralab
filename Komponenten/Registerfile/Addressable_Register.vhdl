@@ -23,8 +23,8 @@ architecture behavior of addressable_register is
         s_adr <= std_logic_vector(to_unsigned(ADR, REG_ADR_WIDTH));
         s_storage <= (others => '0') when pi_rst = '1' else
                         pi_writeRegData when pi_writeRegAddr = s_adr and rising_edge(pi_clk);
-        po_readRegData1 <= s_storage when pi_readRegAddr1 = s_adr else 
+        po_readRegData1 <= s_storage when pi_readRegAddr1 = s_adr and rising_edge(pi_clk) else 
                     (others => 'Z');
-        po_readRegData2 <= s_storage when pi_readRegAddr2 = s_adr else 
+        po_readRegData2 <= s_storage when pi_readRegAddr2 = s_adr and rising_edge(pi_clk)else 
                     (others => 'Z');
 end architecture;    
