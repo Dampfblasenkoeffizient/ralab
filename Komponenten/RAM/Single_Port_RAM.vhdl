@@ -11,7 +11,7 @@ entity Single_Port_RAM is
     port(
         pi_clk : in std_logic;
         pi_rst : in std_logic;
-        pi_add : in std_logic_vector (0 to reg_adr_width - 1); -- adr width weird weil tb für 16 ist
+        pi_add : in std_logic_vector (0 to adr_width - 1); 
         pi_we : in std_logic;
         pi_data : in std_logic_vector(word_width -1 downto 0);
         po_data : out std_logic_vector(word_width -1 downto 0)
@@ -19,12 +19,11 @@ entity Single_Port_RAM is
 end entity;    
 
 architecture behavior of Single_Port_RAM is
-    type memory is array (0 to REG_ADR_WIDTH - 1) of std_logic_vector (WORD_WIDTH -1 downto 0); -- mit word_width=16, 
+    type memory is array (0 to 4) of std_logic_vector (WORD_WIDTH -1 downto 0); 
     signal regs : memory := (others => (others => '0'));
     
     begin
         process(pi_clk, pi_rst, pi_we)
-        variable add : integer := to_integer(unsigned(pi_add));
 
             begin 
             if pi_rst = '1' then 
@@ -32,11 +31,11 @@ architecture behavior of Single_Port_RAM is
             else 
                 if rising_edge(pi_clk) then 
                     if pi_we = '1' then 
-                        regs(add) <= pi_data;
+                        regs(to_integer(unsigned(pi_add))) <= pi_data;
                     end if;            
                 end if;            
             end if; 
-            po_data <= regs (add);
+            po_data <= regs (to_integer(unsigned(pi_add)));
         end process;
     
 end behavior;
