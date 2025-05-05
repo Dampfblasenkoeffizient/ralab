@@ -13,12 +13,12 @@ architecture behavior of Single_Port_RAM_tb is
     signal data_out : std_logic_vector(15 downto 0);
     
     begin
-        RAM : entity work.Single_Port_RAM port map (clk, rst, add, data_in, we, data_out);
+        RAM : entity work.Single_Port_RAM port map (clk, rst, add, we, data_in, data_out);
         clock : process
         begin
-            clk <= 0;
+            clk <= '0';
             wait for 10 ns;
-            clk <= 1;
+            clk <= '1';
             wait for 10 ns;    
         end process;
 
@@ -51,7 +51,7 @@ architecture behavior of Single_Port_RAM_tb is
 
             
 
-
+            report "All tests have finished";
         end process;
 
 end behavior;    

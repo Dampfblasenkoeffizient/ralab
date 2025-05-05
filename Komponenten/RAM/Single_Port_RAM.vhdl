@@ -24,7 +24,7 @@ architecture behavior of Single_Port_RAM is
     
     begin
         process(pi_clk, pi_rst, pi_we)
-        variable add : integer := integer(unsigned(pi_add));
+        variable add : integer := to_integer(unsigned(pi_add));
 
             begin 
             if pi_rst = '1' then 
