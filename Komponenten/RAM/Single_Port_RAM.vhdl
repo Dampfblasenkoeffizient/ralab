@@ -24,18 +24,18 @@ architecture behavior of Single_Port_RAM is
     
     begin
         process(pi_clk, pi_rst, pi_we)
-
             begin 
             if pi_rst = '1' then 
                     regs <= (others => (others => '0'));
             else 
                 if rising_edge(pi_clk) then 
+                po_data <= regs (to_integer(unsigned(pi_add)));
                     if pi_we = '1' then 
                         regs(to_integer(unsigned(pi_add))) <= pi_data;
+                        po_data <= pi_data;
                     end if;            
                 end if;            
             end if; 
-            po_data <= regs (to_integer(unsigned(pi_add)));
         end process;
     
 end behavior;
