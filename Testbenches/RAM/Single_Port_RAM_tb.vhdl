@@ -44,6 +44,9 @@ architecture behavior of Single_Port_RAM_tb is
             data_in(14) <= '1';
             wait for 20 ns;
 
+            assert data_out = data_in report "failure to write"
+            severity error;
+
             we <= '0';
             add(14) <= '0';
             wait for 20 ns;
