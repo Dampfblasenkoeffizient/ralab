@@ -6,7 +6,7 @@ library work;
 use work.constant_package.all;
 --use work.types_package.all
 
-
+-- adr_width auf 16 statt 32. oder wollen die generic?
 
 entity Single_Port_RAM is
     port(
