@@ -1,3 +1,4 @@
+-- Clara Heilig
 library ieee;
 use ieee.std_logic_1164.all;
 
@@ -14,14 +15,6 @@ end PipelineRegister;
 
 architecture behavior of PipelineRegister is
     begin
-        process(pi_clk, pi_rst)
-            begin
-                if(pi_rst = '1') then
-                    po_data <= (others => '0');
-                else 
-                    if rising_edge(pi_clk) then
-                        po_data <= pi_data;
-                    end if; 
-                end if;
-        end process;               
+        po_data <= (others => '0') when pi_rst = '1' else
+                    pi_data when rising_edge(pi_clk);     
 end architecture;    

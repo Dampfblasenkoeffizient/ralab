@@ -1,8 +1,6 @@
+# Paul Riedel
+
 #!/bin/bash
-#for file in $(find . -type f -name "*.vhdl"); do
-#    ghdl -a "$file"
-#done   
-#ghdl -e my_alu_tb
 
 
 ghdl --clean
