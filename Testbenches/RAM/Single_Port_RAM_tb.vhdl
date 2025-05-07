@@ -14,7 +14,7 @@ architecture behavior of Single_Port_RAM_tb is
     constant zero : std_logic_vector(15 downto 0) := (others => '0');
     
     begin
-        RAM : entity work.Single_Port_RAM port map (clk, rst, add, we, data_in, data_out);
+        RAM : entity work.Single_Port_RAM generic map (16, 16) port map (clk, rst, add, we, data_in, data_out);
         clock : process
         begin
             while now < 100 ns loop
