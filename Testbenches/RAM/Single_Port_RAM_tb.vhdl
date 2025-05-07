@@ -42,23 +42,25 @@ architecture behavior of Single_Port_RAM_tb is
 
             add(14) <= '1';
             data_in(14) <= '1';
+            data_in(15) <= '0';
             wait for 20 ns;
 
             assert data_out = data_in report "failure to write"
             severity error;
 
             we <= '0';
+            wait for 1 ns;
             add(14) <= '0';
-            wait for 20 ns;
+            wait for 19 ns;
 
             assert data_out(15) = '1' report "written Info did not remain at address"
             severity error;
  
             report "reading test starts";
             
-            wait for 1 ns;
+
             add(15) <= '1';
-            wait for 19 ns;
+            wait for 20 ns;
 
             assert data_out /= data_in report "wrote while writing flag not set" 
             severity error;

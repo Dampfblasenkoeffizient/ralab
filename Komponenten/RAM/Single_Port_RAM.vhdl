@@ -10,8 +10,8 @@ use work.constant_package.all;
 
 entity Single_Port_RAM is
     generic(
-        G_word_width : integer := word_width;
-        G_adr_width : integer := adr_width
+        G_word_width : integer := WORD_WIDTH;
+        G_adr_width : integer := ADR_WIDTH
     );
     port(
         pi_clk : in std_logic;
