@@ -29,7 +29,6 @@ architecture behavior of Single_Port_RAM_tb is
         process
         begin
             report "RAM Test!";
-            --wait for 2 ns;
 
             --we = 1
             report "reading test starts";

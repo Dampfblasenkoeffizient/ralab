@@ -1,5 +1,5 @@
 $date
-  Wed May  7 13:10:50 2025
+  Wed May  7 14:16:30 2025
 $end
 $version
   GHDL v0
@@ -14,6 +14,8 @@ $upscope $end
 $scope module std_logic_1164 $end
 $upscope $end
 $scope module numeric_std $end
+$upscope $end
+$scope module constant_package $end
 $upscope $end
 $scope module single_port_ram_tb $end
 $var reg 1 ! clk $end

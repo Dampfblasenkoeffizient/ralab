@@ -3,28 +3,28 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 library work;
---use work.constant_package.all;
+use work.constant_package.all;
 --use work.types_package.all
 
 -- adr_width auf 16 statt 32. oder wollen die generic?
 
 entity Single_Port_RAM is
     generic(
-        word_width : integer := 16;
-        adr_width : integer := 32
+        G_word_width : integer := word_width;
+        G_adr_width : integer := adr_width
     );
     port(
         pi_clk : in std_logic;
         pi_rst : in std_logic;
-        pi_add : in std_logic_vector (0 to adr_width -1); 
+        pi_add : in std_logic_vector (0 to G_adr_width -1); 
         pi_we : in std_logic;
-        pi_data : in std_logic_vector(word_width -1 downto 0);
-        po_data : out std_logic_vector(word_width -1 downto 0)
+        pi_data : in std_logic_vector(G_word_width -1 downto 0);
+        po_data : out std_logic_vector(G_word_width -1 downto 0)
     );
 end entity;    
 
 architecture behavior of Single_Port_RAM is
-    type memory is array (0 to 2 ** adr_width - 1) of std_logic_vector (WORD_WIDTH -1 downto 0);
+    type memory is array (0 to 2 ** G_adr_width - 1) of std_logic_vector (G_word_width -1 downto 0);
     signal regs : memory := (others => (others => '0'));
     signal add : integer;
     begin
