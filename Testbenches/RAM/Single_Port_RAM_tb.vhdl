@@ -25,8 +25,8 @@ architecture behavior of Single_Port_RAM_tb is
             end loop;
             wait;
         end process;
-
-        process
+                    
+        test : process
         begin
             report "RAM Test!";
 
@@ -59,6 +59,11 @@ architecture behavior of Single_Port_RAM_tb is
             wait for 19 ns;
             
             assert data_out = zero report "failed to reset"
+            severity error;
+
+            we <= '1';
+            wait for 20 ns;
+            assert data_out = zero report "wrote while rst = 1"
             severity error;
 
             report "All tests have finished";
