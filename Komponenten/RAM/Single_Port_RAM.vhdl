@@ -26,21 +26,26 @@ end entity;
 architecture behavior of Single_Port_RAM is
     type memory is array (0 to 2 ** adr_width - 1) of std_logic_vector (WORD_WIDTH -1 downto 0);
     signal regs : memory := (others => (others => '0'));
-    
+    signal add : integer;
     begin
         process(pi_clk, pi_rst, pi_we)
             begin 
             if pi_rst = '1' then 
-                    regs <= (others => (others => '0'));
-            else 
+                regs <= (others => (others => '0'));
                 if rising_edge(pi_clk) then 
-                po_data <= regs (to_integer(unsigned(pi_add)));
-                    if pi_we = '1' then 
+                    po_data <= (others => '0');
+                end if;
+            else 
+                if rising_edge(pi_clk) then
+                    if(pi_we = '1') then
                         regs(to_integer(unsigned(pi_add))) <= pi_data;
-                        po_data <= pi_data;
+                        po_data <= pi_data;    
+                    else
+                        po_data <= regs(to_integer(unsigned(pi_add)));  
                     end if;            
                 end if;            
             end if; 
         end process;
+        
     
 end behavior;

@@ -36,8 +36,7 @@ architecture behavior of Single_Port_RAM_tb is
             add <= (others => '0');
             we <= '1';
             data_in(15) <= '1';
-            wait for 1 ns;
-            wait for 19 ns;
+            wait for 20 ns;
 
             assert data_out = data_in report "failure to write"
             severity error;
@@ -55,8 +54,10 @@ architecture behavior of Single_Port_RAM_tb is
             -- rst
             report "reset test starts";
             add(15) <= '0';
+            wait for 20 ns;
             rst <= '1';
             wait for 1 ns;
+            wait for 19 ns;
             
             assert data_out = zero report "failed to reset"
             severity error;
