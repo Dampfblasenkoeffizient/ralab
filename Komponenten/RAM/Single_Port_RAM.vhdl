@@ -12,7 +12,7 @@ entity Single_Port_RAM is
     port(
         pi_clk : in std_logic;
         pi_rst : in std_logic;
-        pi_add : in std_logic_vector (0 to adr_width - 1); 
+        pi_add : in std_logic_vector (0 to 15); 
         pi_we : in std_logic;
         pi_data : in std_logic_vector(word_width -1 downto 0);
         po_data : out std_logic_vector(word_width -1 downto 0)
@@ -20,7 +20,7 @@ entity Single_Port_RAM is
 end entity;    
 
 architecture behavior of Single_Port_RAM is
-    type memory is array (0 to 2 ** 16 -1) of std_logic_vector (WORD_WIDTH -1 downto 0); 
+    type memory is array (0 to 2 ** 16 - 1) of std_logic_vector (WORD_WIDTH -1 downto 0);
     signal regs : memory := (others => (others => '0'));
     
     begin
