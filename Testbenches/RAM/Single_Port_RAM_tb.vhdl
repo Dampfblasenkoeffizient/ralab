@@ -17,7 +17,7 @@ architecture behavior of Single_Port_RAM_tb is
         RAM : entity work.Single_Port_RAM generic map (16, 16) port map (clk, rst, add, we, data_in, data_out);
         clock : process
         begin
-            while now < 100 ns loop
+            while now < 160 ns loop
                 clk <= '0';
                 wait for 10 ns;
                 clk <= '1';
@@ -31,7 +31,7 @@ architecture behavior of Single_Port_RAM_tb is
             report "RAM Test!";
 
             --we = 1
-            report "reading test starts";
+            report "wring test starts";
             add <= (others => '0');
             we <= '1';
             data_in(15) <= '1';
@@ -40,9 +40,19 @@ architecture behavior of Single_Port_RAM_tb is
             assert data_out = data_in report "failure to write"
             severity error;
 
-            -- we = 0  
-            report "writing test starts";
+            add(14) <= '1';
+            data_in(14) <= '1';
+            wait for 20 ns;
+
             we <= '0';
+            add(14) <= '0';
+            wait for 20 ns;
+
+            assert data_out(15) = '1' report "written Info did not remain at address"
+            severity error;
+ 
+            report "reading test starts";
+            
             wait for 1 ns;
             add(15) <= '1';
             wait for 19 ns;
@@ -55,8 +65,13 @@ architecture behavior of Single_Port_RAM_tb is
             add(15) <= '0';
             wait for 20 ns;
             rst <= '1';
-            wait for 1 ns;
-            wait for 19 ns;
+            wait for 20 ns;
+
+            assert data_out = zero report "failed to reset"
+            severity error;
+
+            add(14) <= '1';
+            wait for 20 ns;
             
             assert data_out = zero report "failed to reset"
             severity error;
