@@ -23,7 +23,7 @@ package constant_package is
   constant DATA_WIDTH_GEN   : integer := 8;
   constant REG_ADR_WIDTH    : integer := 5;
   constant ADR_WIDTH        : integer := 32;
-  constant WORD_WIDTH       : integer := 16;
+  constant WORD_WIDTH       : integer := 32;
   constant FUNC3_WIDTH      : integer := 3;
 
   -- Instruction Opcodes for ALU
@@ -37,4 +37,16 @@ package constant_package is
 
   constant ADD_ALU_OP : std_logic_vector(ALU_OPCODE_WIDTH - 1 downto 0) := "0000";
   constant SUB_ALU_OP : std_logic_vector(ALU_OPCODE_WIDTH - 1 downto 0) := "1000";
+
+  -- Opcodes
+  
+  constant R_INS_OP : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0110011";
+  constant I_INS_OP : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0010011";
+  constant L_INS_OP : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0000011";
+  constant S_INS_OP : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0100011";
+  constant B_INS_OP : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "1100011";
+  constant JAL_INS_OP : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "1101111";
+  constant JALR_INS_OP : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "1100111";
+  constant LUI_INS_OP : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0110111";
+  constant AUIPC_INS_OP : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := "0010111";
 end package constant_package;
