@@ -35,14 +35,18 @@ begin
     po_storeImm(11 downto 5) <= pi_instr(31 downto 25);
     po_storeImm(31 downto 12) <= (others => pi_instr(31));
 
-    po_unsignedImm(19 downto 0) <= pi_instr(31 downto 12);
-    po_unsignedImm(31 downto 20) <= (others => pi_instr(31));
+    po_unsignedImm(31 downto 12) <= pi_instr(31 downto 12);
+    po_unsignedImm(11 downto 0) <= (others => '0');
+    
+    po_branchImm(10 downto 0) <= pi_instr(30 downto 25) & pi_instr(11 downto 8) & '0';
+    po_branchImm(11) <= pi_instr(7);
+    po_branchImm(12) <= pi_instr(31);
+    po_branchImm(31 downto 13) <= (others => pi_instr(31));
 
-    po_branchImm(4 downto 0) <= pi_instr(11 downto 7);
-    po_branchImm(11 downto 5) <= pi_instr(31 downto 25);
-    po_branchImm(31 downto 12) <= (others => pi_instr(31));
-
-    po_jumpImm(19 downto 0) <= pi_instr(31 downto 12);
-    po_jumpImm(31 downto 20) <= (others => pi_instr(31));
+    po_jumpImm(10 downto 0) <= pi_instr(30 downto 21) & '0';
+    po_jumpImm(11) <= pi_instr(20);
+    po_jumpImm(19 downto 12) <= pi_instr(19 downto 12);
+    po_jumpImm(20) <= pi_instr(31);
+    po_jumpImm(31 downto 21) <= (others => pi_instr(31));
  -- end solution!!
 end architecture arc;
