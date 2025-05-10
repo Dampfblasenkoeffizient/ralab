@@ -11,6 +11,4 @@ ghdl -a --std=08 Testbenches/SignExtender/signExtension_tb.vhdl
 
 ghdl -e --std=08 signExtension_tb
 
-ghdl -r --std=08 signExtension_tb --vcd=signExtender.vcd
-
-gtkwave signExtender.vcd
+ghdl -r --std=08 signExtension_tb
