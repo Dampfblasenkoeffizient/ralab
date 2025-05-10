@@ -31,9 +31,9 @@ begin
     po_immediateImm(11 downto 0) <= pi_instr(31 downto 20);
     po_immediateImm(31 downto 12) <= (others => pi_instr(31));
 
-    po_storeImm(5 downto 0) <= pi_instr(11 downto 7);
-    po_storeImm(12 downto 6) <= pi_instr(31 downto 25);
-    po_storeImm(31 downto 13) <= (others => pi_instr(31));
+    po_storeImm(4 downto 0) <= pi_instr(11 downto 7);
+    po_storeImm(11 downto 5) <= pi_instr(31 downto 25);
+    po_storeImm(31 downto 12) <= (others => pi_instr(31));
 
     po_unsignedImm(19 downto 0) <= pi_instr(31 downto 12);
     po_unsignedImm(31 downto 20) <= (others => pi_instr(31));
