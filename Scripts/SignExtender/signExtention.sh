@@ -4,6 +4,7 @@
 ghdl --clean
 
 ghdl -a --std=08 Packages/constant_package.vhdl
+ghdl -a --std=08 Packages/types.vhdl
 ghdl -a --std=08 Packages/Util_Asm_Package.vhdl
 ghdl -a --std=08 Komponenten/SignExtender/signExtension.vhdl
 ghdl -a --std=08 Testbenches/SignExtender/signExtension_tb.vhdl
