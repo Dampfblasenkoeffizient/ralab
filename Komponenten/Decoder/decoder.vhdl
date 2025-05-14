@@ -17,7 +17,6 @@ entity decoder is
         G_WORD_WIDTH : integer := 32
     );
     port(
-        pi_clk : in std_logic;
         pi_instruction : in std_logic_vector(G_WORD_WIDTH - 1 downto 0);
         po_controlWord : out controlword := control_word_init
     );
@@ -37,7 +36,7 @@ architecture arc of decoder is
 
                 case opcode is
                     when R_INS_OP =>
-                        v_insFormat := bFormat;
+                        v_insFormat := rFormat;
                     when LUI_INS_OP =>
                         v_insFormat := uFormat;
                     when AUIPC_INS_OP =>
@@ -62,23 +61,24 @@ architecture arc of decoder is
 
                 case v_insFormat is
                     when rFormat => 
-                        -- register operations (r_type) set the alu_opcode based on the operation (func3) and the selector bit (func7(1))
-                        -- the immediate select bit of the alu input mux is cleared since both inputs are registers
+                        -- reset controlword for all instructions
+                        -- register operations (r_type) set the alu_opcode based on the operation (func3) and the selector bit (func7(5))
+                        -- reg_write bit set to enable writing of the results in the r register for R-type instructions
+                        po_controlWord <= control_word_init;
                         po_controlWord.ALU_OP <= funct7(5) & funct3;
-                        po_controlWord.I_IMM_SEL <= '0';
+                        po_controlWord.REG_WRITE <= '0';
                     when iFormat =>
-                        
+                        po_controlWord <= control_word_init; 
                     when uFormat =>
-                    
+                        po_controlWord <= control_word_init;
                     when bFormat =>
-                        
+                        po_controlWord <= control_word_init;
                     when sFormat =>
-                        
+                        po_controlWord <= control_word_init;
                     when jFormat =>
-
+                        po_controlWord <= control_word_init;
                     when nullFormat =>
                         po_controlWord <= control_word_init;
                 end case;
-
         end process;
 end architecture;

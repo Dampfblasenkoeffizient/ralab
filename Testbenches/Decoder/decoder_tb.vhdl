@@ -1,16 +1,8 @@
--- Laboratory RA solutions/versuch3
--- Sommersemester 25
--- Group Details
--- Lab Date:
--- 1. Participant First and Last Name: 
--- 2. Participant First and Last Name:
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.constant_package.all;
 use work.types.all;
-use ieee.std_logic_textio.all;
 
 entity decoder_tb is
 end entity decoder_tb;
@@ -18,7 +10,7 @@ end entity decoder_tb;
 architecture behavior of decoder_tb is
 
   constant PERIOD      : time                                      := 10 ns; -- Example: ClockPERIOD of 10 ns
-  signal s_instruction : std_logic_vector(31 downto 0) := (others => '0');
+  signal s_instruction : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal s_controlword : controlWord                               := CONTROL_WORD_INIT;
   signal s_clk         : std_logic                                 := '0';
 
@@ -28,8 +20,7 @@ begin
     port map
     (
       pi_instruction => s_instruction,
-      po_controlWord => s_controlword,
-      pi_clk         => s_clk
+      po_controlWord => s_controlword
     );
 
   lu : process is
@@ -55,14 +46,13 @@ begin
 
     v_expectedControlWord.I_IMM_SEL := '0';
     v_expectedControlWord.ALU_OP    := ADD_ALU_OP;
+    v_expectedControlWord.REG_WRITE    := '1';
     s_clk <= '1';
     wait for PERIOD / 2;
     s_clk <= '0';
     wait for PERIOD / 2;
     assert (s_controlword = v_expectedcontrolword)
-    report "Error in R-Format decoding with alu_op: " & to_string(s_controlword.ALU_OP) & " and i_imm_sel: " & std_logic'image(s_controlword.I_IMM_SEL) 
-    & " expected alu_op: " & to_string(v_expectedControlWord.ALU_OP) & " and i_imm_sel: " & std_logic'image(v_expectedControlWord.I_IMM_SEL) 
-    severity error;
+    report "Error in R-Format decoding" severity error;
 
     instr := (others => '0');
     func7 := "0" & SUB_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
@@ -76,9 +66,7 @@ begin
     s_clk <= '0';
     wait for PERIOD / 2;
     assert (s_controlword = v_expectedcontrolword)
-    report "Error in R-Format decoding at SUB_ALU_OP with alu_op: " & to_string(s_controlword.ALU_OP) & " and i_imm_sel: " & std_logic'image(s_controlword.I_IMM_SEL)
-    & " expected alu_op: " & to_string(v_expectedControlWord.ALU_OP) & " and i_imm_sel: " & std_logic'image(v_expectedControlWord.I_IMM_SEL) 
-    severity error;
+    report "Error in R-Format decoding" severity error;
 
     instr := (others => '0');
     func7 := "0" & SRA_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
@@ -92,9 +80,7 @@ begin
     s_clk <= '0';
     wait for PERIOD / 2;
     assert (s_controlword = v_expectedcontrolword)
-    report "Error in R-Format decoding at SRA with alu_op: " & to_string(s_controlword.ALU_OP) & " and i_imm_sel: " & std_logic'image(s_controlword.I_IMM_SEL)
-    & " expected alu_op: " & to_string(v_expectedControlWord.ALU_OP) & " and i_imm_sel: " & std_logic'image(v_expectedControlWord.I_IMM_SEL) 
-    severity error;
+    report "Error in R-Format decoding" severity error;
     instr := (others => '0');
     func7 := "0" & SRL_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
     func3 := SRL_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0);
@@ -107,9 +93,7 @@ begin
     s_clk <= '0';
     wait for PERIOD / 2;
     assert (s_controlword = v_expectedcontrolword)
-    report "Error in R-Format decoding at SRL with alu_op: " & to_string(s_controlword.ALU_OP) & " and i_imm_sel: " & std_logic'image(s_controlword.I_IMM_SEL)
-    & " expected alu_op: " & to_string(v_expectedControlWord.ALU_OP) & " and i_imm_sel: " & std_logic'image(v_expectedControlWord.I_IMM_SEL) 
-    severity error;
+    report "Error in R-Format decoding" severity error;
     instr := (others => '0');
     func7 := "0" & SLL_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
     func3 := SLL_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0);
@@ -122,9 +106,7 @@ begin
     s_clk <= '0';
     wait for PERIOD / 2;
     assert (s_controlword = v_expectedcontrolword)
-    report "Error in R-Format decoding at SLL with alu_op: " & to_string(s_controlword.ALU_OP) & " and i_imm_sel: " & std_logic'image(s_controlword.I_IMM_SEL)
-    & " expected alu_op: " & to_string(v_expectedControlWord.ALU_OP) & " and i_imm_sel: " & std_logic'image(v_expectedControlWord.I_IMM_SEL) 
-    severity error;
+    report "Error in R-Format decoding" severity error;
     instr := (others => '0');
     func7 := "0" & OR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
     func3 := OR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0);
@@ -137,9 +119,7 @@ begin
     s_clk <= '0';
     wait for PERIOD / 2;
     assert (s_controlword = v_expectedcontrolword)
-    report "Error in R-Format decoding at OR with alu_op: " & to_string(s_controlword.ALU_OP) & " and i_imm_sel: " & std_logic'image(s_controlword.I_IMM_SEL)
-    & " expected alu_op: " & to_string(v_expectedControlWord.ALU_OP) & " and i_imm_sel: " & std_logic'image(v_expectedControlWord.I_IMM_SEL) 
-    severity error;
+    report "Error in R-Format decoding" severity error;
     instr := (others => '0');
     func7 := "0" & XOR_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
     func3 := XOR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0);
@@ -152,9 +132,7 @@ begin
     s_clk <= '0';
     wait for PERIOD / 2;
     assert (s_controlword = v_expectedcontrolword)
-    report "Error in R-Format decoding at XOR with alu_op: " & to_string(s_controlword.ALU_OP) & " and i_imm_sel: " & std_logic'image(s_controlword.I_IMM_SEL)
-    & " expected alu_op: " & to_string(v_expectedControlWord.ALU_OP) & " and i_imm_sel: " & std_logic'image(v_expectedControlWord.I_IMM_SEL) 
-    severity error;
+    report "Error in R-Format decoding" severity error;
     instr := (others => '0');
     func7 := "0" & AND_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
     func3 := AND_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0);
@@ -167,9 +145,7 @@ begin
     s_clk <= '0';
     wait for PERIOD / 2;
     assert (s_controlword = v_expectedcontrolword)
-    report "Error in R-Format decoding at AND with alu_op: " & to_string(s_controlword.ALU_OP) & " and i_imm_sel: " & std_logic'image(s_controlword.I_IMM_SEL)
-    & " expected alu_op: " & to_string(v_expectedControlWord.ALU_OP) & " and i_imm_sel: " & std_logic'image(v_expectedControlWord.I_IMM_SEL) 
-    severity error;
+    report "Error in R-Format decoding" severity error;
 
     instr := (others => '0');
     func7 := "0" & "0" & "00000";
@@ -178,14 +154,13 @@ begin
 
     v_expectedControlWord.I_IMM_SEL := '0';
     v_expectedControlWord.ALU_OP    := "0000";
+    v_expectedControlWord.REG_WRITE := '0';
     s_clk <= '1';
     wait for PERIOD / 2;
     s_clk <= '0';
     wait for PERIOD / 2;
     assert (s_controlword = v_expectedcontrolword)
-    report "Error in R-Format decoding at NOP with alu_op: " & to_string(s_controlword.ALU_OP) & " and i_imm_sel: " & std_logic'image(s_controlword.I_IMM_SEL)
-    & " expected alu_op: " & to_string(v_expectedControlWord.ALU_OP) & " and i_imm_sel: " & std_logic'image(v_expectedControlWord.I_IMM_SEL) 
-    severity error;
+    report "Error in R-Format decoding" severity error;
 
     assert false
     report "end of test"
