@@ -66,7 +66,7 @@ architecture arc of decoder is
                         -- reg_write bit set to enable writing of the results in the r register for R-type instructions
                         po_controlWord <= control_word_init;
                         po_controlWord.ALU_OP <= funct7(5) & funct3;
-                        po_controlWord.REG_WRITE <= '0';
+                        po_controlWord.REG_WRITE <= '1';
                     when iFormat =>
                         po_controlWord <= control_word_init; 
                     when uFormat =>
