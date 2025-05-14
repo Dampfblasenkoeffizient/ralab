@@ -1,3 +1,10 @@
+-- Laboratory RA solutions/versuch3
+-- Sommersemester 25
+-- Group Details
+-- Lab Date:
+-- 1. Participant First and Last Name: 
+-- 2. Participant First and Last Name:
+
 -- ========================================================================
 -- Author:       Marcel Rieß
 -- Last updated: 02.05.2025

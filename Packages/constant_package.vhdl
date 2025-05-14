@@ -2,6 +2,7 @@
 -- Sommersemester 25
 -- Group Details
 -- Lab Date:
+
 -- 1. Participant First and Last Name: Clara Heilig
 -- 2. Participant First and Last Name: Paul Riedel
 
