@@ -198,7 +198,7 @@ begin
     po_controlWord => controlWord_mem
   );
 
-  mem_register_d : entity work.PipelineRegister generic map(WORD_WIDTH)
+  mem_register_d : entity work.PipelineRegister generic map(REG_ADR_WIDTH)
   port map(
     pi_clk => pi_clk,
     pi_rst => pi_rst,
@@ -232,7 +232,7 @@ begin
     po_controlWord => controlWord_wb
   );
 
-  wb_register_d : entity work.PipelineRegister generic map(WORD_WIDTH)
+  wb_register_d : entity work.PipelineRegister generic map(REG_ADR_WIDTH)
   port map(
     pi_clk => pi_clk,
     pi_rst => pi_rst,
