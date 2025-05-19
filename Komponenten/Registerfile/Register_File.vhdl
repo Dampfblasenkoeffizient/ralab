@@ -35,7 +35,11 @@ end register_file;
 
 architecture behavior of register_file is
 
-    signal s_registers : registermemory := (others => (others => '0'));
+    signal s_registers : registermemory := (
+        1 => std_logic_vector(to_unsigned(9, WORD_WIDTH)),
+        2 => std_logic_vector(to_unsigned(8, WORD_WIDTH)),
+        others => (others => '0')
+        );
     begin
         process(pi_clk, pi_rst)
         begin
@@ -53,3 +57,4 @@ architecture behavior of register_file is
         end process;
 
 end architecture;
+

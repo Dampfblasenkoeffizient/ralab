@@ -63,6 +63,8 @@ riscv_inst : entity work.R_only_RISC_V
       wait for PERIOD / 2;
       s_clk <= '0';
       wait for PERIOD / 2;
+    report integer'image(to_integer(signed(s_registersOut(1)))) & " at 1";
+    report integer'image(to_integer(signed(s_registersOut(2)))) & " at 2";
      --  report "Register 10 contains " & integer'image(to_integer(signed(s_registersOut(13))));
     if (i = 5) then -- after 5 clock clock cycles
         assert (to_integer(signed(s_registersOut(10))) = 9)

@@ -269,7 +269,8 @@ begin
     pi_readRegAddr2 => t,
     pi_writeRegAddr => d_wb,
     po_readRegData1 => s_reg,
-    po_readRegData2 => t_reg
+    po_readRegData2 => t_reg,
+    po_registerOut => po_registersOut
   );
     -- end solution!!
 ---********************************************************************
