@@ -1,5 +1,5 @@
 $date
-  Mon May 19 16:28:16 2025
+  Tue May 20 13:55:59 2025
 $end
 $version
   GHDL v0
@@ -23,8 +23,6 @@ $scope module std_logic_textio $end
 $upscope $end
 $scope module math_real $end
 $upscope $end
-$scope module types_package $end
-$upscope $end
 $scope module r_only_risc_v_tb $end
 $var reg 1 ! s_rst $end
 $var reg 1 " s_clk $end
@@ -40,11 +38,11 @@ $var reg 32 & pc_data_in[31:0] $end
 $var reg 32 ' pc_data_out[31:0] $end
 $var reg 32 ( ir_data_in[31:0] $end
 $var reg 32 ) ir_data_out[31:0] $end
-$var reg 7 * fucnt7[6:0] $end
-$var reg 5 + t[4:0] $end
-$var reg 5 , s[4:0] $end
-$var reg 5 - d[4:0] $end
-$var reg 3 . funct3[2:0] $end
+$var reg 7 * funct7[6:0] $end
+$var reg 3 + funct3[2:0] $end
+$var reg 5 , t[4:0] $end
+$var reg 5 - s[4:0] $end
+$var reg 5 . d[4:0] $end
 $var reg 7 / opcode[6:0] $end
 $comment controlword_in is not handled $end
 $comment controlword_decode is not handled $end
@@ -1091,7 +1089,8 @@ $var reg 5 Q' pi_readregaddr2[4:0] $end
 $var reg 5 R' pi_writeregaddr[4:0] $end
 $var reg 32 S' po_readregdata1[31:0] $end
 $var reg 32 T' po_readregdata2[31:0] $end
-$comment s_storage is not handled $end
+$comment po_registerout is not handled $end
+$comment s_registers is not handled $end
 $upscope $end
 $upscope $end
 $upscope $end
@@ -1107,10 +1106,10 @@ bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU '
 b00000000000000000000000000000000 (
 bUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU )
 bUUUUUUU *
-bUUUUU +
+bUUU +
 bUUUUU ,
 bUUUUU -
-bUUU .
+bUUUUU .
 bUUUUUUU /
 b00000000000000000000000000000000 0
 b00000000000000000000000000000000 1
@@ -1712,10 +1711,10 @@ b00000000000000000000000000000000 T'
 1$
 b00000000000000000000000000000000 )
 b0000000 *
-b00000 +
+b000 +
 b00000 ,
 b00000 -
-b000 .
+b00000 .
 b0000000 /
 b00000000000000000000000000000000 4
 b00000000000000000000000000000000 5

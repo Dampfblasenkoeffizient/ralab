@@ -31,7 +31,7 @@ architecture structure of R_only_RISC_V_tb is
 
   signal   s_registersOut    : registerMemory := (others => (others => '0'));
   signal s_instructions : memory := (
-    1=> std_logic_vector'("0" & OR_ALU_OP  (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) &  OR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(10, REG_ADR_WIDTH)) & R_INS_OP), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
+    1=> std_logic_vector'("0" & OR_ALU_OP  (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & OR_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(10, REG_ADR_WIDTH)) & R_INS_OP), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
     2=> std_logic_vector'("0" & ADD_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & ADD_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned( 8, REG_ADR_WIDTH)) & R_INS_OP), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
     3=> std_logic_vector'("0" & SUB_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & SUB_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(11, REG_ADR_WIDTH)) & R_INS_OP), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
     4=> std_logic_vector'("0" & SUB_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000" & std_logic_vector(to_unsigned(2, REG_ADR_WIDTH)) & std_logic_vector(to_unsigned(1, REG_ADR_WIDTH)) & SUB_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0) & std_logic_vector(to_unsigned(12, REG_ADR_WIDTH)) & R_INS_OP), -- R-Befehle haben alle den gleichen Opcode, daher hier hardkodiert
@@ -57,14 +57,19 @@ riscv_inst : entity work.R_only_RISC_V
   process is
   begin
 
+      s_clk <= '1';
+      s_rst <= '1';
+      wait for PERIOD / 2;
+      s_rst <= '0';
+      s_clk <= '0';
       wait for PERIOD / 2;
    for i in 1 to 30 loop
       s_clk <= '1';
       wait for PERIOD / 2;
       s_clk <= '0';
       wait for PERIOD / 2;
-    report integer'image(to_integer(signed(s_registersOut(1)))) & " at 1";
-    report integer'image(to_integer(signed(s_registersOut(2)))) & " at 2";
+    --report integer'image(to_integer(signed(s_registersOut(1)))) & " at 1";
+    --report integer'image(to_integer(signed(s_registersOut(2)))) & " at 2";
      --  report "Register 10 contains " & integer'image(to_integer(signed(s_registersOut(13))));
     if (i = 5) then -- after 5 clock clock cycles
         assert (to_integer(signed(s_registersOut(10))) = 9)

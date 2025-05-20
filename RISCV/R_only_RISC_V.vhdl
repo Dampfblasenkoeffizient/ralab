@@ -32,35 +32,35 @@ architecture structure of r_only_RISC_V is
   constant PERIOD                : time                                            := 10 ns;
   constant ADD_FOUR_TO_ADDRESS   : std_logic_vector(WORD_WIDTH - 1 downto 0)       := std_logic_vector(to_signed((4), WORD_WIDTH));
   -- signals
-  signal n_clk : std_logic := not pi_clk;
+  signal n_clk : std_logic := '0';
   -- PC
-  signal pc_data_in : std_logic_vector(WORD_WIDTH - 1 downto 0);
-  signal pc_data_out : std_logic_vector(WORD_WIDTH - 1 downto 0);
+  signal pc_data_in : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal pc_data_out : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   -- Instruction Register
-  signal ir_data_in : std_logic_vector(WORD_WIDTH - 1 downto 0);
-  signal ir_data_out : std_logic_vector(WORD_WIDTH - 1 downto 0);
+  signal ir_data_in : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal ir_data_out : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   -- Decode
-  signal fucnt7 : std_logic_vector(6 downto 0);
-  signal t, s, d : std_logic_vector(REG_ADR_WIDTH - 1 downto 0);
-  signal funct3 : std_logic_vector(2 downto 0);
-  signal opcode : std_logic_vector(OPCODE_WIDTH - 1 downto 0);
-  signal controlWord_in : controlword;
-  signal controlWord_decode : controlword;
-  signal t_reg, s_reg : std_logic_vector(WORD_WIDTH - 1 downto 0);
+  signal funct7 : std_logic_vector(6 downto 0) := (others => '0');
+  signal funct3 : std_logic_vector(2 downto 0) := (others => '0');
+  signal t, s, d : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+  signal opcode : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := (others => '0');
+  signal controlWord_in : controlword := control_word_init;
+  signal controlWord_decode : controlword := control_word_init;
+  signal t_reg, s_reg : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   -- Execute
-  signal controlWord_execute : controlword;
-  signal d_execute : std_logic_vector(REG_ADR_WIDTH - 1 downto 0);
-  signal alu_opcode : std_logic_vector(ALU_OPCODE_WIDTH - 1 downto 0);
-  signal t_alu, s_alu : std_logic_vector(WORD_WIDTH - 1 downto 0);
+  signal controlWord_execute : controlword := control_word_init;
+  signal d_execute : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+  signal alu_opcode : std_logic_vector(ALU_OPCODE_WIDTH - 1 downto 0) := (others => '0');
+  signal t_alu, s_alu : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal alu_out : std_logic_vector(WORD_WIDTH - 1 downto 0);
   -- mem
-  signal controlWord_mem : controlword;
-  signal d_mem : std_logic_vector(REG_ADR_WIDTH - 1 downto 0);
-  signal alu_out_mem : std_logic_vector (WORD_WIDTH - 1 downto 0);
+  signal controlWord_mem : controlword := control_word_init;
+  signal d_mem : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+  signal alu_out_mem : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0');
   -- WB
-  signal controlWord_wb : controlword;
-  signal d_wb : std_logic_vector(REG_ADR_WIDTH - 1 downto 0);
-  signal alu_out_wb : std_logic_vector (WORD_WIDTH - 1 downto 0);
+  signal controlWord_wb : controlword := control_word_init;
+  signal d_wb : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0'); 
+  signal alu_out_wb : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0'); 
 
   -- begin solution:
   -- end solution!!
@@ -71,6 +71,8 @@ begin
 ---* program counter adder and pc-register
 ---********************************************************************
 -- begin solution:  
+  n_clk <= not pi_clk;
+
   pc_adder : entity work.add_alu generic map(WORD_WIDTH)
   port map(
     pi_opa => pc_data_out,
@@ -120,7 +122,7 @@ begin
 ---* decode phase
 ---********************************************************************
 -- begin solution:
-  fucnt7 <= ir_data_out(31 downto 25);
+  funct7 <= ir_data_out(31 downto 25);
   t <= ir_data_out(24 downto 20);
   s <= ir_data_out(19 downto 15);
   funct3 <= ir_data_out(14 downto 12);
