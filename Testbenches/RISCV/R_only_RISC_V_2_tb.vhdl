@@ -27,7 +27,7 @@ architecture structure of R_only_RISC_V_2_tb is
 
   constant PERIOD                : time                                           := 10 ns;
   -- signals
-  -- begin solution:
+  -- begin solution: Clara Heilig
   signal s_rst : std_logic := '1';
   signal s_clk : std_logic := '0';
   -- end solution!!
