@@ -2,3 +2,6 @@
 *.cf
 *.o
 *.exe
+*.vcd
+*.ghw
+CodingConvention.vhdl

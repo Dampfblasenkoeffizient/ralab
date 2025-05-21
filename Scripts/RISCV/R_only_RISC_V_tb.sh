@@ -25,6 +25,9 @@ ghdl -a --std=08 Komponenten/Registerfile/*
 ghdl -a --std=08 Komponenten/Cache/*    
 ghdl -a --std=08 RISCV/*
 ghdl -a --std=08 Testbenches/RISCV/R_only_RISC_V_tb.vhdl
+ghdl -a --std=08 Testbenches/RISCV/R_only_RISC_V_2_tb.vhdl
 ghdl -e --std=08 R_only_RISC_V_tb
+ghdl -e --std=08 R_only_RISC_V_2_tb
 ghdl -r --std=08 R_only_RISC_V_tb --wave=reg.ghw
-gtkwave reg.ghw 
+ghdl -r --std=08 R_only_RISC_V_2_tb --wave=riscv2.ghw
+#gtkwave reg.ghw 
