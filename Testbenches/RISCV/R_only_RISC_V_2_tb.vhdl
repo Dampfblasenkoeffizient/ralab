@@ -28,7 +28,7 @@ architecture structure of R_only_RISC_V_2_tb is
   constant PERIOD                : time                                           := 10 ns;
   -- signals
   -- begin solution: Clara Heilig
-  signal s_rst : std_logic := '1';
+  signal s_rst : std_logic := '0';
   signal s_clk : std_logic := '0';
   -- end solution!!
   signal   s_registersOut    : registerMemory := (others => (others => '0'));
@@ -74,22 +74,20 @@ riscv_inst : entity work.R_only_RISC_V
       wait for PERIOD / 2;
 
     -- begin solution:
-      if(i = 2) then s_rst <= '0';
-      end if;
 
       report integer'image(to_integer(unsigned(s_registersOut(2)))) & "   in cicle   " & integer'image(i);
       
-      if (i = 6) then assert to_integer(unsigned(s_registersOut(2))) = 8 severity error;
+      if (i = 4) then assert to_integer(unsigned(s_registersOut(2))) = 8 severity error;
       end if;
-      if (i = 9) then assert to_integer(unsigned(s_registersOut(2))) = 17 severity error;
+      if (i = 7) then assert to_integer(unsigned(s_registersOut(2))) = 17 severity error;
       end if;
-      if (i = 12) then assert to_integer(unsigned(s_registersOut(2))) = 26 severity error;
+      if (i = 10) then assert to_integer(unsigned(s_registersOut(2))) = 26 severity error;
       end if;
-      if (i = 15) then assert to_integer(unsigned(s_registersOut(2))) = 35 severity error;
+      if (i = 13) then assert to_integer(unsigned(s_registersOut(2))) = 35 severity error;
       end if;
-      if (i = 18) then assert to_integer(unsigned(s_registersOut(2))) = 44 severity error;
+      if (i = 15) then assert to_integer(unsigned(s_registersOut(2))) = 44 severity error;
       end if;
-      if (i = 21) then assert to_integer(unsigned(s_registersOut(2))) = 53 severity error;
+      if (i = 18) then assert to_integer(unsigned(s_registersOut(2))) = 53 severity error;
       end if;
     -- end solution!!
 
