@@ -35,24 +35,16 @@ architecture structure of R_only_RISC_V_2_tb is
   signal   s_instructions : memory                                     := (
     -- begin solution:
       (others => '0'),
-      (others => '0'),
-      (others => '0'),
-      (others => '0'),
-      --(others => '0'),
       std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
-      (others => '0'),
       (others => '0'),
       (others => '0'),
       std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
       (others => '0'),
       (others => '0'),
-      (others => '0'),
       std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
       (others => '0'),
       (others => '0'),
-      (others => '0'),
       std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
-      (others => '0'),
       (others => '0'),
       (others => '0'),
       std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
@@ -85,9 +77,20 @@ riscv_inst : entity work.R_only_RISC_V
       if(i = 2) then s_rst <= '0';
       end if;
 
-      report integer'image(to_integer(unsigned(s_registersOut(2))));
-      --assert (to_integer(unsigned(s_registersOut(2))) = 8 + 9 * i) report "Test failed in Takt" & integer'image(i)
-      --severity error;
+      report integer'image(to_integer(unsigned(s_registersOut(2)))) & "   in cicle   " & integer'image(i);
+      
+      if (i = 6) then assert to_integer(unsigned(s_registersOut(2))) = 8 severity error;
+      end if;
+      if (i = 9) then assert to_integer(unsigned(s_registersOut(2))) = 17 severity error;
+      end if;
+      if (i = 12) then assert to_integer(unsigned(s_registersOut(2))) = 26 severity error;
+      end if;
+      if (i = 15) then assert to_integer(unsigned(s_registersOut(2))) = 35 severity error;
+      end if;
+      if (i = 18) then assert to_integer(unsigned(s_registersOut(2))) = 44 severity error;
+      end if;
+      if (i = 21) then assert to_integer(unsigned(s_registersOut(2))) = 53 severity error;
+      end if;
     -- end solution!!
 
     end loop;
