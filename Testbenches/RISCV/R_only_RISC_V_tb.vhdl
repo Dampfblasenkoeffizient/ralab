@@ -91,19 +91,19 @@ riscv_inst : entity work.R_only_RISC_V
 
       if (i = 8) then -- after 8 clock clock cycles
         assert (to_integer(signed(s_registersOut(12))) = 1)
-         report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(1) & " after cycle 8"
+         report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(1) & " after cycle 7"
           severity error;
 
      end if;
       if (i = 9) then -- after 9 clock clock cycles
         assert (to_integer(signed(s_registersOut(12))) = 25)
-          report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) & " after cycle 7"
+          report "ADD-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(25) & " after cycle 8"
           severity error;
      end if;
 
            if (i = 10) then -- after 10 clock clock cycles
         assert (to_integer(signed(s_registersOut(12))) = -1)
-          report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) & " after cycle 8"
+          report "SUB-Operation failed. Register 12 contains " & integer'image(to_integer(signed(s_registersOut(12)))) & " but should contain " & integer'image(-1) & " after cycle 9"
           severity error;
      end if;
      if (i = 11) then

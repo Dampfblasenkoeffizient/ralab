@@ -37,6 +37,8 @@ architecture behavior of register_file is
 
     signal s_registers : registermemory;
     begin
+        po_readRegData1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
+        po_readRegData2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
         process(pi_clk, pi_rst)
         begin
             if pi_rst = '1' then
@@ -51,8 +53,6 @@ architecture behavior of register_file is
                 end if;
                 end if;
             end if;
-            po_readRegData1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
-            po_readRegData2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
         end process;
         process(s_registers)
             begin
