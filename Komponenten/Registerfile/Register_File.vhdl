@@ -53,7 +53,10 @@ architecture behavior of register_file is
             end if;
             po_readRegData1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
             po_readRegData2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
-            po_registerOut <= s_registers;
+        end process;
+        process(s_registers)
+            begin
+                po_registerOut <= s_registers;
         end process;
 
 end architecture;
