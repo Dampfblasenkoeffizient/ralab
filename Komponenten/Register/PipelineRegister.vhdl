@@ -9,7 +9,7 @@ entity PipelineRegister is
     port (
         pi_clk, pi_rst : in std_logic;
         pi_data : in std_logic_vector ((registerWidth -1) downto 0);
-        po_data : out std_logic_vector ((registerWidth -1) downto 0)
+        po_data : out std_logic_vector ((registerWidth -1) downto 0) := (others => '0')
     );
 end PipelineRegister;
 

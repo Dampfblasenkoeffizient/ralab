@@ -56,12 +56,6 @@ riscv_inst : entity work.R_only_RISC_V
 
   process is
   begin
-
-      s_clk <= '1';
-      s_rst <= '1';
-      wait for PERIOD / 2;
-      s_rst <= '0';
-      s_clk <= '0';
       wait for PERIOD / 2;
    for i in 1 to 30 loop
       s_clk <= '1';
