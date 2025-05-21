@@ -28,17 +28,17 @@ architecture structure of R_only_RISC_V_2_tb is
   constant PERIOD                : time                                           := 10 ns;
   -- signals
   -- begin solution:
-  signal s_rst : std_logic;
+  signal s_rst : std_logic := '0';
   signal s_clk : std_logic;
   -- end solution!!
   signal   s_registersOut    : registerMemory := (others => (others => '0'));
   signal   s_instructions : memory                                     := (
     -- begin solution:
-      ("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
-      ("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
-      ("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
-      ("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
-      ("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
+      std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
+      std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
+      std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
+      std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
+      std_logic_vector'("0000000" &  STD_LOGIC_VECTOR(to_unsigned(1, 5)) & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & "000" & STD_LOGIC_VECTOR(to_unsigned(2, 5)) & R_INS_OP),
       others => (others => '0')
   -- end solution!!
                                   );
@@ -66,7 +66,8 @@ riscv_inst : entity work.R_only_RISC_V
 
     -- begin solution:
       report integer'image(to_integer(unsigned(s_registersOut(2))));
-      --assert (s_registersOut = 8 + 9 * i) report "Test failed in Takt" & integer'image(i);
+      --assert (to_integer(unsigned(s_registersOut(2))) = 8 + 9 * i) report "Test failed in Takt" & integer'image(i)
+      --severity error;
     -- end solution!!
 
     end loop;
