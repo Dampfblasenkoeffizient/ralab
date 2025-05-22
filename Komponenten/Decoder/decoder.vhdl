@@ -68,7 +68,9 @@ architecture arc of decoder is
                         po_controlWord.ALU_OP <= funct7(5) & funct3;
                         po_controlWord.REG_WRITE <= '1';
                     when iFormat =>
-                        po_controlWord <= control_word_init; 
+                        po_controlWord <= control_word_init;
+                        po_controlWord.ALU_OP <= '0' & funct3;
+                        po_controlWord.I_IMM_SEL <= '1';
                     when uFormat =>
                         po_controlWord <= control_word_init;
                     when bFormat =>

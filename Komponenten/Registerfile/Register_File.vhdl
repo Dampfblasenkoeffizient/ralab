@@ -19,42 +19,33 @@ entity register_file is
     );
 end register_file;
 
--- architecture behaviour of register_file is 
---     signal s_write : std_logic_vector (G_WORD_WIDTH - 1 downto 0);
---     signal s_zeros : std_logic_vector (G_REG_ADR_WIDTH - 1 downto 0);
--- begin
---         s_write <= pi_writeRegData when pi_writeEnable = '1';
---         po_readRegData1 <= (others => '0') when pi_readRegAddr1 = s_zeros and rising_edge(pi_clk) else 
---                     (others => 'Z');
---         po_readRegData2 <= (others => '0') when pi_readRegAddr2 = s_zeros and rising_edge(pi_clk) else   
---                     (others => 'Z');
---         registers : for i in 1 to 2 ** G_REG_ADR_WIDTH generate
---                 reg : entity work.addressable_register generic map(G_WORD_WIDTH, G_REG_ADR_WIDTH, i) port map(pi_clk, pi_rst, s_write, pi_readRegAddr1, pi_readRegAddr2, pi_writeRegAddr, po_readRegData1, po_readRegData2);
---         end generate;
--- end architecture;
-
 architecture behavior of register_file is
 
     signal s_registers : registermemory := (
-                    1 => std_logic_vector(to_unsigned(9, WORD_WIDTH)),
-                    2 => std_logic_vector(to_unsigned(8, WORD_WIDTH)),
+                    -- 1 => std_logic_vector(to_unsigned(9, WORD_WIDTH)),
+                    -- 2 => std_logic_vector(to_unsigned(8, WORD_WIDTH)),
                     others => (others => '0')
                     );
+    signal s_read1, s_read2 : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+
     begin
-        po_readRegData1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
-        po_readRegData2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
         process(pi_clk, pi_rst)
         begin
             if pi_rst = '1' then
                 s_registers <= (others => (others => '0')
                     );
             else if rising_edge(pi_clk) then
+                s_read1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
+                s_read2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
                 if pi_writeEnable = '1' and (to_integer(unsigned(pi_writeRegAddr)) /= 0) then 
                     s_registers(to_integer(unsigned(pi_writeRegAddr))) <= pi_writeRegData;
                 end if;
-                end if;
+            end if;
             end if;
         end process;
+
+        po_readRegData1 <= s_read1;
+        po_readRegData2 <= s_read2;
         po_registerOut <= s_registers;
 
 end architecture;

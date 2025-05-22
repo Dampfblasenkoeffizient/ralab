@@ -1,15 +1,8 @@
 -- Paul Riedel
 library ieee;
 use ieee.std_logic_1164.all;
+use work.constant_package.all;
 
-use work.constant_package.AND_ALU_OP;
-use work.constant_package.XOR_ALU_OP;
-use work.constant_package.OR_ALU_OP;
-use work.constant_package.SLL_ALU_OP;
-use work.constant_package.SRL_ALU_OP;
-use work.constant_package.SRA_ALU_OP;
-use work.constant_package.ADD_ALU_OP;
-use work.constant_package.SUB_ALU_OP;
 
 
 entity my_alu is generic(
@@ -21,7 +14,7 @@ entity my_alu is generic(
         pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
         pi_opcode    : in  std_logic_vector(G_ALU_OPCODE_WIDTH - 1 downto 0);
         po_result    : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
-        po_carryOut  : out std_logic
+        po_carryOut, po_zero  : out std_logic
     );
 end my_alu;
 
@@ -37,6 +30,9 @@ architecture my_alu_arch of my_alu is
     signal s_sub_result : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
     signal s_carry : std_logic;
     
+    signal s_slt_result : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
+    signal s_sltu_result : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
+
     begin
 
     and_alu_inst : entity work.and_alu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_and_result);
@@ -47,6 +43,9 @@ architecture my_alu_arch of my_alu is
     sra_alu_inst : entity work.sra_alu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_sra_result);
     add_alu_inst : entity work.add_alu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_add_result, s_carry);
     sub_alu_inst : entity work.sub_alu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_sub_result, s_carry);
+    
+    slt_alu_inst : entity work.slt generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_slt_result);
+    sltu_alu_inst : entity work.sltu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_sltu_result);
 
     po_result <= s_and_result when pi_opcode = AND_ALU_OP else
                  s_or_result  when pi_opcode = OR_ALU_OP else
@@ -56,6 +55,9 @@ architecture my_alu_arch of my_alu is
                  s_sra_result when pi_opcode = SRA_ALU_OP else
                  s_add_result when pi_opcode = ADD_ALU_OP else
                  s_sub_result when pi_opcode = SUB_ALU_OP else
+                 s_slt_result when pi_opcode = SLT_ALU_OP else
+                 s_sltu_result when pi_opcode = SLTU_ALU_OP else
+
                  (others => '0');
     po_carryOut <= s_carry;
 end architecture my_alu_arch;
