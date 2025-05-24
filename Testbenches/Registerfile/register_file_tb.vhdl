@@ -55,7 +55,7 @@ begin
 
 
   -- DUT instantiation
-  uut: register_file
+  uut: entity work.register_file
     port map (
       pi_clk            => clk,
       pi_rst            => rst,

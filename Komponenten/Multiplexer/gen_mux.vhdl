@@ -17,11 +17,12 @@ end gen_mux;
 
 architecture behavior of gen_mux is 
 begin
-    process(pi_first, pi_second, pi_sel)
-    begin
-        if pi_sel = '0' then
-            po_res <= pi_first;
-        else po_res <= pi_second;  
-        end if;
-    end process; 
+    po_res <= pi_first when pi_sel = '0' else pi_second;
+--    process(pi_first, pi_second, pi_sel)
+--    begin
+--        if pi_sel = '0' then
+--            po_res <= pi_first;
+--        else po_res <= pi_second;  
+--        end if;
+--    end process; 
 end architecture;    

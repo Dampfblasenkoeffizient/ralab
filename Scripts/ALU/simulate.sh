@@ -16,7 +16,10 @@ ghdl -a --std=08 Komponenten/ALU/xor_alu.vhdl
 ghdl -a --std=08 Komponenten/ALU/sra_alu.vhdl
 ghdl -a --std=08 Komponenten/ALU/srl_alu.vhdl
 ghdl -a --std=08 Komponenten/ALU/sub_alu.vhdl
+ghdl -a --std=08 Komponenten/ALU/slt.vhdl
+ghdl -a --std=08 Komponenten/ALU/sltu.vhdl
 ghdl -a --std=08 Komponenten/ALU/my_alu.vhdl
+
 ghdl -a --std=08 Testbenches/ALU/my_alu_tb.vhdl
 
 # Elaborate

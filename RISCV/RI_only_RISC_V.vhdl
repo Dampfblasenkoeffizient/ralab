@@ -18,16 +18,16 @@ library ieee;
   use work.constant_package.all;
   use work.types.all;
 
-entity r_only_RISC_V is
+entity ri_only_RISC_V is
   port (
     pi_rst         : in    std_logic;
     pi_clk         : in    std_logic;
     pi_instruction : in    memory := (others => (others => '0'));
     po_registersOut : out   registerMemory := (others => (others => '0'))
   );
-end entity r_only_RISC_V;
+end entity ri_only_RISC_V;
 
-architecture structure of r_only_RISC_V is
+architecture structure of ri_only_RISC_V is
 
   constant PERIOD                : time                                            := 10 ns;
   constant ADD_FOUR_TO_ADDRESS   : std_logic_vector(WORD_WIDTH - 1 downto 0)       := std_logic_vector(to_signed((4), WORD_WIDTH));
@@ -47,7 +47,7 @@ architecture structure of r_only_RISC_V is
   signal controlWord_in : controlword := control_word_init;
   signal controlWord_decode : controlword := control_word_init;
   signal t_reg, s_reg : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-  signal immediateImm : std_logic(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal immediateImm : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   -- Execute
   signal controlWord_exec : controlword := control_word_init;
   signal d_execute : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
@@ -171,7 +171,7 @@ begin
     pi_clk => pi_clk,
     pi_rst => pi_rst,
     pi_data => t_reg,
-    po_data => opa
+    po_data => t_alu
   );
 
   execute_register_s_alu : entity work.PipelineRegister generic map(WORD_WIDTH)
@@ -179,7 +179,7 @@ begin
     pi_clk => pi_clk,
     pi_rst => pi_rst,
     pi_data => s_reg,
-    po_data => opb
+    po_data => opa
   );
 
   execute_register_immediateImm : entity work.PipelineRegister generic map(WORD_WIDTH)
@@ -196,17 +196,18 @@ begin
 ---* execute phase
 ---********************************************************************
  -- begin solution:
-  mux_alu_opa : entity work.gen_mux generic map(WORD_WIDTH)
+  mux_alu_opb : entity work.gen_mux generic map(WORD_WIDTH)
   port map(
     pi_sel => controlWord_exec.I_IMM_SEL,
-    pi_first => immediateImm_exec,
-    pi_second => t_alu
+    pi_first => t_alu,
+    pi_second => immediateImm_exec,
+    po_res => opb
   );
 
   alu : entity work.my_alu generic map(WORD_WIDTH, ALU_OPCODE_WIDTH)
   port map(
-    pi_opa => opb,
-    pi_opb => opa,
+    pi_opa => opa,
+    pi_opb => opb,
     pi_opcode => controlWord_exec.ALU_OP,
     po_result => alu_out
   );

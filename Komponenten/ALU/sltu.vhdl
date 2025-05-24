@@ -2,12 +2,11 @@ library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
   use work.constant_package.all;
-  use work.types.all;
 
-entity sltu is
+entity sltu is generic (G_DATA_WIDTH_GEN : integer);
 port(
-    opa, opb : in std_logic_vector(DATA_WIDTH_GEN - 1 downto 0);
-    result : out std_logic_vector(DATA_WIDTH_GEN - 1 downto 0)
+    opa, opb : in std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
+    result : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0)
 );
 end entity;
 

@@ -56,7 +56,7 @@ begin
     v_expectedControlWord.ALU_OP := ADD_ALU_OP;
     v_expectedControlWord.REG_WRITE    := '1';
     wait for 1 ns;
-    assert (s_controlword = v_expectedcontrolword) report "Error in R-Format decoding"  severity error;
+    assert (s_controlword = v_expectedcontrolword) report "Error in R-Format decoding expected " & integer'image(to_integer(unsigned(v_expectedcontrolword.ALU_OP))) & " vs actual " & integer'image(to_integer(unsigned(s_controlword.ALU_OP))) severity error;
 
   
     func7 := "0" & SUB_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
@@ -184,8 +184,7 @@ begin
     v_expectedControlWord.ALU_OP := ADD_ALU_OP;
     v_expectedControlWord.REG_WRITE    := '1';
     wait for 1 ns;
-    assert (s_controlword = v_expectedcontrolword) report "Error in I-Format decoding"  severity error;
-
+    assert (s_controlword = v_expectedcontrolword) report "Error in I-Format decoding expected " & std_logic'image(v_expectedcontrolword.I_IMM_SEL) & " vs actual " & std_logic'image(s_controlword.I_IMM_SEL) severity error;
   
     func7 := "0" & SRA_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
     func3 := SRA_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0);
@@ -196,7 +195,7 @@ begin
     v_expectedControlWord.ALU_OP := SRA_ALU_OP;
     v_expectedControlWord.REG_WRITE    := '1';
     wait for 1 ns;
-    assert (s_controlword.ALU_OP = v_expectedcontrolword.ALU_OP) report "Error in I-Format decoding"  severity error;
+    assert (s_controlword.ALU_OP = v_expectedcontrolword.ALU_OP) report "Error in I-Format decoding expected " & integer'image(to_integer(unsigned(func7(5) & func3))) & " vs actual " & integer'image(to_integer(unsigned(s_controlword.ALU_OP))) severity error;
 
   func7 := "0" & SRL_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
     func3 := SRL_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0);
@@ -207,7 +206,7 @@ begin
     v_expectedControlWord.ALU_OP := SRL_ALU_OP;
     v_expectedControlWord.REG_WRITE    := '1';
     wait for 1 ns;
-    assert (s_controlword = v_expectedcontrolword) report "Error in I-Format decoding"  severity error;
+    assert (s_controlword = v_expectedcontrolword) report "Error in I-Format decoding expected " & std_logic'image(v_expectedcontrolword.I_IMM_SEL) & " vs actual " & std_logic'image(s_controlword.I_IMM_SEL) severity error;
 
 func7 := "0" & SLL_ALU_OP (ALU_OPCODE_WIDTH - 1) & "00000";
     func3 := SLL_ALU_OP(ALU_OPCODE_WIDTH - 2 downto 0);

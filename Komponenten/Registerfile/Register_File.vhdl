@@ -1,14 +1,14 @@
 -- Paul Riedel
 library ieee;
 use ieee.std_logic_1164.all;
-use work.types.all;
 use work.constant_package.all;
+use work.types.all;
 use ieee.numeric_std.all;
 
 entity register_file is 
     generic (
         G_WORD_WIDTH : integer := WORD_WIDTH; 
-        G_REG_ADR_WIDTH : integer := 4
+        G_REG_ADR_WIDTH : integer := REG_ADR_WIDTH
     );
     port (
         pi_clk, pi_rst, pi_writeEnable : in std_logic;
