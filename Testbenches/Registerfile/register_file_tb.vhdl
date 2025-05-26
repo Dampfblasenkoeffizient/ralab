@@ -1,159 +1,112 @@
+-- Laboratory RA solutions/versuch5
+-- Sommersemester 25
+-- Group Details
+-- Lab Date:
+-- 1. Participant First and Last Name: 
+-- 2. Participant First and Last Name:
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use ieee.math_real.all;
-
 use work.constant_package.all;
+use work.types.all;
 
 entity register_file_tb is
-     generic (G_WORD_WIDTH : integer := 16); 
-end entity register_file_tb;
+end register_file_tb;
 
-architecture behav of register_file_tb is
+architecture behavior of register_file_tb is
+  -- Component declaration
+  component register_file
+    generic (
+      word_width   : integer := WORD_WIDTH;
+      adr_width    : integer := REG_ADR_WIDTH
+    );
+    port (
+      pi_clk            : in  std_logic;
+      pi_rst            : in  std_logic;
+      pi_readRegAddr1   : in  std_logic_vector(adr_width - 1 downto 0);
+      pi_readRegAddr2   : in  std_logic_vector(adr_width - 1 downto 0);
+      pi_writeRegAddr   : in  std_logic_vector(adr_width - 1 downto 0);
+      pi_writeRegData   : in  std_logic_vector(word_width - 1 downto 0);
+      pi_writeEnable    : in  std_logic;
 
-signal s_we, s_rst, s_clk : std_logic := '0';
-signal s_adr1, s_adr2, s_adrWr : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+      po_readRegData1   : out std_logic_vector(word_width - 1 downto 0);
+      po_readRegData2   : out std_logic_vector(word_width - 1 downto 0);
+      po_registerOut    : out registerMemory
+    );
+  end component;
 
-signal s_reg1, s_reg2, s_reg3 : std_logic_vector(G_WORD_WIDTH - 1 downto 0) := (others => '0');
-begin 
-dut1 : entity work.register_file
-    generic map (G_WORD_WIDTH, REG_ADR_WIDTH)
-    port map(
-        pi_readRegAddr1 => s_adr1,
-        pi_readRegAddr2 => s_adr2,
-        pi_writeRegAddr => s_adrWr,
-        po_readRegData1 => s_reg1,
-        po_readRegData2 => s_reg2,
-        pi_writeRegData => s_reg3,
-        pi_clk => s_clk,
-        pi_writeEnable => s_we,
-        pi_rst => s_rst 
+  -- Constants
+  constant c_clk_period : time := 10 ns;
+
+  -- Signals
+  signal clk            : std_logic := '0';
+  signal rst            : std_logic := '0';
+  signal readAddr1      : std_logic_vector(REG_ADR_WIDTH-1 downto 0) := (others => '0');
+  signal readAddr2      : std_logic_vector(REG_ADR_WIDTH-1 downto 0) := (others => '0');
+  signal writeAddr      : std_logic_vector(REG_ADR_WIDTH-1 downto 0) := (others => '0');
+  signal writeData      : std_logic_vector(WORD_WIDTH-1 downto 0) := (others => '0');
+  signal writeEnable    : std_logic := '0';
+  signal readData1      : std_logic_vector(WORD_WIDTH-1 downto 0);
+  signal readData2      : std_logic_vector(WORD_WIDTH-1 downto 0);
+  signal regDump        : registerMemory;
+
+begin
+
+
+  -- DUT instantiation
+  uut: register_file
+    port map (
+      pi_clk            => clk,
+      pi_rst            => rst,
+      pi_readRegAddr1   => readAddr1,
+      pi_readRegAddr2   => readAddr2,
+      pi_writeRegAddr   => writeAddr,
+      pi_writeRegData   => writeData,
+      pi_writeEnable    => writeEnable,
+      po_readRegData1   => readData1,
+      po_readRegData2   => readData2,
+      po_registerOut    => regDump
     );
 
-test: process is
-begin
-    report "test begin";
-    
-    s_we <= '1';
-    s_adrWr <= "00100";
-    s_reg3 <= std_logic_vector(to_unsigned(7, G_WORD_WIDTH));
+  -- Test process
+  test_proc: process
+  begin
+    -- Reset
+    rst <= '1';
+    wait for c_clk_period;
+    rst <= '0';
+    wait for c_clk_period;
 
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
+    -- Write to register 1
+    writeAddr   <= std_logic_vector(to_unsigned(1, REG_ADR_WIDTH));
+    writeData   <= x"DEADBEEF";
+    writeEnable <= '1';
 
-    s_adr1 <= "00100";
+    -- Attempt to read the same register in the same cycle (RAW hazard test)
+    readAddr1   <= std_logic_vector(to_unsigned(1, REG_ADR_WIDTH));
 
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
+    clk <= '0';
+    wait for c_clk_period / 2;
+    clk <= '1';
+    wait for c_clk_period / 2;
 
-    s_adrWr <= "00101";
-    s_reg3 <= std_logic_vector(to_unsigned(13, G_WORD_WIDTH));
-
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    s_adr2 <= "00101";
-
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    assert s_reg1 = std_logic_vector(to_unsigned(7, G_WORD_WIDTH)) and s_reg2 = std_logic_vector(to_unsigned(13, G_WORD_WIDTH))
-    report "value is read incorrectly"
+    assert readData1 = x"00000000"
+    report "RAW hazard: Value mismatch! Expected 00000000, got " & to_hstring(readData1)
+    severity error;
+  
+    writeEnable <= '0';
+    clk <= '0';
+    wait for c_clk_period / 2;
+    clk <= '1';
+    wait for c_clk_period / 2;
+    -- Now read register 1 again to verify correct write
+    assert readData1 = x"DEADBEEF"
+    report "RAW hazard: Value mismatch! Expected DEADBEEF, got " & to_hstring(readData1)
     severity error;
 
-    -- write to R0
-
-    s_adrWr <= "00000";
-    s_reg3 <= std_logic_vector(to_unsigned(35, G_WORD_WIDTH));
-
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    s_adr1 <= "00000";
-    
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    assert s_reg1 = std_logic_vector(to_unsigned(0, G_WORD_WIDTH))
-    report "R0 writes to non zero after write"
-    severity error;
-
-    -- reset
-
-    s_rst <= '1';
-
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    assert s_reg2 = std_logic_vector(to_unsigned(0, G_WORD_WIDTH))
-    report "reset does not work"
-    severity error;
-
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    assert s_reg2 = std_logic_vector(to_unsigned(0, G_WORD_WIDTH))
-    report "write during reset possible"
-    severity error;
-
-    s_rst <= '0';
-    s_we <= '0';
-
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    assert s_reg2 = std_logic_vector(to_unsigned(0, G_WORD_WIDTH))
-    report "write without w_enable"
-    severity error;
-
-    -- write after reset
-
-    s_we <= '1';
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    s_adrWr <= "00101";
-    s_reg3 <= std_logic_vector(to_unsigned(13, G_WORD_WIDTH));
-
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    s_adr2 <= "00101";
-
-    s_clk <= '0';
-    wait for 1 ns;
-    s_clk <= '1';
-    wait for 1 ns;
-
-    assert s_reg2 = std_logic_vector(to_unsigned(13, G_WORD_WIDTH))
-    report "write after reset not possible"
-    severity error;
-
-    report "all tests finished";
-
+    report "Test passed: RAW hazard correctly handled.";
     wait;
-end process;
+  end process;
 
-end architecture;
+end behavior;

@@ -35,6 +35,8 @@ architecture my_alu_arch of my_alu is
     signal s_sra_result : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
     signal s_add_result : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
     signal s_sub_result : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
+    signal s_slt_result : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
+    signal s_sltu_result : std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
     signal s_carry : std_logic;
     
     begin
@@ -47,6 +49,8 @@ architecture my_alu_arch of my_alu is
     sra_alu_inst : entity work.sra_alu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_sra_result);
     add_alu_inst : entity work.add_alu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_add_result, s_carry);
     sub_alu_inst : entity work.sub_alu generic map(G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_sub_result, s_carry);
+    slt_alu_inst : entity work.slt_alu generic map (G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_slt_result);
+    sltu_alu_inst : entity work.sltu_alu generic map (G_DATA_WIDTH_GEN) port map(pi_opa, pi_opb, s_sltu_result);
 
     po_result <= s_and_result when pi_opcode = AND_ALU_OP else
                  s_or_result  when pi_opcode = OR_ALU_OP else
@@ -56,6 +60,8 @@ architecture my_alu_arch of my_alu is
                  s_sra_result when pi_opcode = SRA_ALU_OP else
                  s_add_result when pi_opcode = ADD_ALU_OP else
                  s_sub_result when pi_opcode = SUB_ALU_OP else
+                 s_slt_result when pi_opcode = SLT_ALU_OP else
+                 s_sltu_result when pi_opcode = SLTU_ALU_OP else
                  (others => '0');
     po_carryOut <= s_carry;
 end architecture my_alu_arch;

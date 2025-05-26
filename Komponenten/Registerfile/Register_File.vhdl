@@ -35,6 +35,8 @@ end register_file;
 
 architecture behavior of register_file is
 
+    signal  s_read1 : std_logic_vector(G_REG_ADR_WIDTH -1 downto 0);
+    signal  s_read2 : std_logic_vector(G_REG_ADR_WIDTH -1 downto 0);
     signal s_registers : registermemory := (
                     1 => std_logic_vector(to_unsigned(9, WORD_WIDTH)),
                     2 => std_logic_vector(to_unsigned(8, WORD_WIDTH)),
@@ -49,6 +51,8 @@ architecture behavior of register_file is
                 s_registers <= (others => (others => '0')
                     );
             else if rising_edge(pi_clk) then
+                s_read1 <= s_registers(to_integer(unsigned(pi_readRegAddr1)));
+                s_read2 <= s_registers(to_integer(unsigned(pi_readRegAddr2)));
                 if pi_writeEnable = '1' and (to_integer(unsigned(pi_writeRegAddr)) /= 0) then 
                     s_registers(to_integer(unsigned(pi_writeRegAddr))) <= pi_writeRegData;
                 end if;
@@ -56,6 +60,8 @@ architecture behavior of register_file is
             end if;
         end process;
         po_registerOut <= s_registers;
+        po_registerOut(to_integer(unsigned(pi_readRegAddr1))) <= s_read1;
+        po_registerOut(to_integer(unsigned(pi_readRegAddr2))) <= s_read2;
 
 end architecture;
 
