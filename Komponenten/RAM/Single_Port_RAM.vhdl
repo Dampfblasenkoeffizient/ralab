@@ -19,7 +19,7 @@ entity Single_Port_RAM is
         pi_add : in std_logic_vector (0 to G_adr_width -1); 
         pi_we : in std_logic;
         pi_data : in std_logic_vector(G_word_width -1 downto 0);
-        po_data : out std_logic_vector(G_word_width -1 downto 0)
+        po_data : out std_logic_vector(G_word_width -1 downto 0) := (others => '0')
     );
 end entity;    
 

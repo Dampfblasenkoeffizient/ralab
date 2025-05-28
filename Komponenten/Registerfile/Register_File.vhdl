@@ -14,7 +14,7 @@ entity register_file is
         pi_clk, pi_rst, pi_writeEnable : in std_logic;
         pi_writeRegData : in std_logic_vector ((G_WORD_WIDTH -1) downto 0);
         pi_readRegAddr1, pi_readRegAddr2, pi_writeRegAddr : in std_logic_vector ((G_REG_ADR_WIDTH -1) downto 0);
-        po_readRegData1, po_readRegData2 : out std_logic_vector ((G_WORD_WIDTH -1) downto 0);
+        po_readRegData1, po_readRegData2 : out std_logic_vector ((G_WORD_WIDTH -1) downto 0) := (others => '0');
         po_registerOut : out registermemory := (others => (others => '0'))
     );
 end register_file;

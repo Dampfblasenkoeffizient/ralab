@@ -11,7 +11,7 @@ entity gen_mux is
     port (
         pi_sel : in std_logic;
         pi_first, pi_second : in std_logic_vector((dataWidth-1) downto 0); 
-        po_res : out std_logic_vector((dataWidth-1) downto 0)
+        po_res : out std_logic_vector((dataWidth-1) downto 0) := (others => '0')
     );
 end gen_mux;    
 

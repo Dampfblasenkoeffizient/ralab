@@ -13,8 +13,8 @@ entity my_alu is generic(
         pi_opa       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
         pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
         pi_opcode    : in  std_logic_vector(G_ALU_OPCODE_WIDTH - 1 downto 0);
-        po_result    : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
-        po_carryOut, po_zero  : out std_logic
+        po_result    : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0) := (others => '0');
+        po_carryOut  : out std_logic := '0'
     );
 end my_alu;
 

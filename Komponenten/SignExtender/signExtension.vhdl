@@ -20,7 +20,7 @@ entity signExtension is
 -- begin solution:
     port(
       pi_instr : in std_logic_vector(WORD_WIDTH - 1 downto 0);
-      po_immediateImm, po_storeImm, po_unsignedImm, po_branchImm, po_jumpImm : out std_logic_vector(WORD_WIDTH - 1 downto 0)
+      po_immediateImm, po_storeImm, po_unsignedImm, po_branchImm, po_jumpImm : out std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0')
     );
    -- end solution!!
 end entity signExtension;

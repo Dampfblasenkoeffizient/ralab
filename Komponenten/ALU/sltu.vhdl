@@ -12,6 +12,6 @@ end entity;
 
 architecture structure of sltu is
 begin
-    result <= (0 => '1', others => '0') when to_integer(unsigned(opa)) < to_integer(unsigned(opb)) else
+    result <= (0 => '1', others => '0') when unsigned(opa) < unsigned(opb) else
               (others => '0');
 end architecture;
