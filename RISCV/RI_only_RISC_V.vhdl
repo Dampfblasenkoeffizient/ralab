@@ -1,7 +1,7 @@
 -- Laboratory RA solutions/versuch4
 -- Sommersemester 25
 -- Group Details
--- Lab Date:
+-- Lab Date: 28.05.2025
 -- 1. Participant First and Last Name: Clara Heilig
 -- 2. Participant First and Last Name: Paul Riedel
 
