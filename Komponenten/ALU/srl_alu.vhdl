@@ -16,7 +16,7 @@ architecture srl_alu_arch of srl_alu is
         process(pi_opa, pi_opb)
         variable v_opb : integer;
         begin
-            v_opb := to_integer(unsigned(pi_opb));
+            v_opb := to_integer(unsigned(pi_opb(4 downto 0)));
             for i in 0 to DATA_WIDTH_GEN - 1 loop
                 if i > DATA_WIDTH_GEN - v_opb - 1 then
                     po_out(i) <= '0';

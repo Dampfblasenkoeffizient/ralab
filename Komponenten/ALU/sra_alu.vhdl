@@ -17,7 +17,7 @@ architecture sra_alu_arch of sra_alu is
         variable v_opb : integer;
         variable v_sign : std_logic;
         begin
-            v_opb := to_integer(unsigned(pi_opb));
+            v_opb := to_integer(unsigned(pi_opb(4 downto 0)));
             v_sign := pi_opa(DATA_WIDTH_GEN - 1);
             for i in 0 to DATA_WIDTH_GEN - 2 loop
                 if i > DATA_WIDTH_GEN - v_opb - 2 then
