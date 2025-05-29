@@ -58,31 +58,37 @@ architecture arc of decoder is
                 end case;
 
                 -- decoding the opcode component of the incomming instruction
-
+                po_controlWord <= control_word_init;
                 case v_insFormat is
                     when rFormat => 
                         -- reset controlword for all instructions
                         -- register operations (r_type) set the alu_opcode based on the operation (func3) and the selector bit (func7(5))
                         -- reg_write bit set to enable writing of the results in the r register for R-type instructions
-                        po_controlWord <= control_word_init;
                         po_controlWord.ALU_OP <= funct7(5) & funct3;
                         po_controlWord.REG_WRITE <= '1';
                     when iFormat =>
-                        po_controlWord <= control_word_init;
                         po_controlWord.ALU_OP(3) <= funct7(5) when funct3 = SRA_ALU_OP(2 downto 0);
                         po_controlWord.ALU_OP(2 downto 0) <= funct3;
                         po_controlWord.I_IMM_SEL <= '1';
                         po_controlWord.REG_WRITE <= '1';
                     when uFormat =>
-                        po_controlWord <= control_word_init;
+                        po_controlWord.I_IMM_SEL <= '1';
+                        po_controlWord.REG_WRITE <= '1';
+                        if opcode = LUI_INS_OP then
+                            po_controlWord.WB_SEL <= "01";
+                        else
+                            po_controlWord.A_SEL <= '1';
+                            po_controlWord.ALU_OP <= ADD_ALU_OP;
+                        end if;
                     when bFormat =>
-                        po_controlWord <= control_word_init;
                     when sFormat =>
-                        po_controlWord <= control_word_init;
                     when jFormat =>
-                        po_controlWord <= control_word_init;
+                        po_controlWord.I_IMM_SEL <= '1';
+                        po_controlWord.ALU_OP <= ADD_ALU_OP;
+                        po_controlWord.REG_WRITE <= '1';
+                        po_controlWord.PC_SEL <= '1';
+                        po_controlWord.WB_SEL <= "10";
                     when nullFormat =>
-                        po_controlWord <= control_word_init;
                 end case;
         end process;
 end architecture;
