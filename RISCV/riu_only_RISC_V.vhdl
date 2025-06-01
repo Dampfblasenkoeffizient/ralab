@@ -54,16 +54,16 @@ architecture structure of riu_only_RISC_V is
   signal alu_opcode : std_logic_vector(ALU_OPCODE_WIDTH - 1 downto 0) := (others => '0');
   signal t_alu, s_alu : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal opa, opb : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-  signal pc_execute, pc_plus4, alu_out, wb_mux_out : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal pc_execute, pc_plus4, alu_out : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal immediate_exec : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   -- mem
   signal controlWord_mem : controlword := control_word_init;
   signal d_mem : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
-  signal alu_out_mem, wb_out_mem, immediate_mem : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal alu_out_mem, wb_out_mem, immediate_mem, pc_plus4_mem : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0');
   -- WB
   signal controlWord_wb : controlword := control_word_init;
   signal d_wb : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0'); 
-  signal wb_out_wb, immediate_wb : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0'); 
+  signal alu_out_wb, immediate_wb, pc_plus4_wb, wb_mux_out : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0'); 
 
   -- begin solution:
   -- end solution!!
@@ -80,7 +80,7 @@ begin
   port map(
     pi_sel => controlWord_mem.PC_SEL,
     pi_first => pc_adder_out,
-    pi_second => alu_out,
+    pi_second => alu_out_mem,
     po_res => pc_data_in
   );
 
@@ -162,7 +162,7 @@ begin
     po_jumpImm => jumpImm
   );
 
-  immediate <=  immediateImm when opcode = I_INS_OP else
+  immediate <=  immediateImm when opcode = I_INS_OP  or opcode = JALR_INS_OP else
                 unsignedImm when opcode = LUI_INS_OP or opcode = AUIPC_INS_OP else
                 jumpImm when opcode = JAL_INS_OP;
 
@@ -258,15 +258,7 @@ begin
     po_result => alu_out
   );
 
-  wb_mux : entity work.fourWayMux
-    port map(
-    pi_sel => controlWord_exec.WB_SEL,
-    pi_0 => alu_out,
-    pi_1 => immediate_exec,
-    pi_2 => pc_plus4,
 
-    po => wb_mux_out
-  );
  -- end solution!!
 
 ---********************************************************************
@@ -304,7 +296,22 @@ begin
     pi_data => alu_out,
     po_data => alu_out_mem
   );
-  
+
+  mem_register_immediate : entity work.PipelineRegister generic map(WORD_WIDTH)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => pi_rst,
+    pi_data => immediate_exec,
+    po_data => immediate_mem
+  );
+
+  mem_register_pc_plus4 : entity work.PipelineRegister generic map(WORD_WIDTH)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => pi_rst,
+    pi_data => pc_plus4,
+    po_data => pc_plus4_mem
+  );  
 -- end solution!!
 
 ---********************************************************************
@@ -332,20 +339,44 @@ begin
     po_data => d_wb
   );
 
-  wb_register_wb_out : entity work.PipelineRegister generic map(WORD_WIDTH)
+  wb_register_alu_out : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
     pi_rst => pi_rst,
-    pi_data => wb_out_mem,
-    po_data => wb_out_wb
+    pi_data => alu_out_mem,
+    po_data => alu_out_wb
   );
+
+  wb_register_immediate : entity work.PipelineRegister generic map(WORD_WIDTH)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => pi_rst,
+    pi_data => immediate_mem,
+    po_data => immediate_wb
+  );
+
+  wb_register_pc_plus4 : entity work.PipelineRegister generic map(WORD_WIDTH)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => pi_rst,
+    pi_data => pc_plus4_mem,
+    po_data => pc_plus4_wb
+  );  
 -- end solution!!
 
 ---********************************************************************
 ---* write back phase
 ---********************************************************************
 
+  wb_mux : entity work.fourWayMux
+    port map(
+    pi_sel => controlWord_wb.WB_SEL,
+    pi_0 => alu_out_wb,
+    pi_1 => immediate_wb,
+    pi_2 => pc_plus4_wb,
 
+    po => wb_mux_out
+  );
 
 ---********************************************************************
 ---* register file (negative clock)
@@ -356,7 +387,7 @@ begin
     pi_clk => n_clk,
     pi_rst => pi_rst,
     pi_writeEnable => controlWord_wb.REG_WRITE,
-    pi_writeRegData => wb_out_wb,
+    pi_writeRegData => wb_mux_out,
     pi_readRegAddr1 => s,
     pi_readRegAddr2 => t,
     pi_writeRegAddr => d_wb,
