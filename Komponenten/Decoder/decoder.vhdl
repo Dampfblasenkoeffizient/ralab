@@ -42,7 +42,7 @@ architecture arc of decoder is
                     when AUIPC_INS_OP =>
                         v_insFormat := uFormat;
                     when JAL_INS_OP =>
-                        v_insFormat := jFormat;
+                        v_insFormat := jFormat; -- muss jetzt in i-Format??? oder nicht?
                     when B_INS_OP =>
                         v_insFormat := bFormat;
                     when S_INS_OP => 
@@ -75,15 +75,20 @@ architecture arc of decoder is
                         po_controlWord.REG_WRITE <= '1';
                     when uFormat =>
                         po_controlWord <= control_word_init;
-                        po_controlWord.I_IMM_SEL <= '1';
-                        po_controlWord.WB_SEL <= "01";
-                        -- soll LUI_OP_INS erkennen?
+                        po_controlWord.I_IMM_SEL <= '1' when opcode = LUI_INS_OP or opcode = JAL_INS_OP or opcode = JALR_INS_OP;
+                        po_controlWord.WB_SEL <= "01" when opcode = LUI_INS_OP;
+                        po_controlWord.A_SEL <= '1' when opcode = AUIPC_INS_OP;
+                        po_controlWord.PC_SEL <= '1' when opcode = JAL_INS_OP or opcode = JALR_INS_OP;
+                        po_controlWord.WB_SEL <= "10" when opcode = JAL_INS_OP or opcode = JALR_INS_OP;
                     when bFormat =>
                         po_controlWord <= control_word_init;
                     when sFormat =>
                         po_controlWord <= control_word_init;
                     when jFormat =>
-                        po_controlWord <= control_word_init;
+                        po_controlWord <= control_word_init; -- muss j jetzt schon gemacht werden ?? dachte da gehoert JAL hin...
+                        --po_controlWord.I_IMM_SEL <= '1';
+                        --po_controlWord.PC_SEL <= '1';
+                        --po_controlWord.WB_SEL <= "10";
                     when nullFormat =>
                         po_controlWord <= control_word_init;
                 end case;
