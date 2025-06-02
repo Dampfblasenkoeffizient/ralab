@@ -75,6 +75,9 @@ architecture arc of decoder is
                         po_controlWord.REG_WRITE <= '1';
                     when uFormat =>
                         po_controlWord <= control_word_init;
+                        po_controlWord.I_IMM_SEL <= '1';
+                        po_controlWord.WB_SEL <= "01";
+                        -- soll LUI_OP_INS erkennen?
                     when bFormat =>
                         po_controlWord <= control_word_init;
                     when sFormat =>
