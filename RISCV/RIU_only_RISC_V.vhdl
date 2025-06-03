@@ -141,7 +141,7 @@ begin
   signextender_inst : entity work.signExtension
   port map(
     pi_instr => ir_data_out,
-    po_immediateImm => immediateImm
+    po_imm => immediateImm
   );
 -- end solution!!
 

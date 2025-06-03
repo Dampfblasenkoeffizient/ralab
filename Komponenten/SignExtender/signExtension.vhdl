@@ -20,33 +20,44 @@ entity signExtension is
 -- begin solution:
     port(
       pi_instr : in std_logic_vector(WORD_WIDTH - 1 downto 0);
-      po_immediateImm, po_storeImm, po_unsignedImm, po_branchImm, po_jumpImm : out std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0')
+      po_imm: out std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0')
     );
    -- end solution!!
 end entity signExtension;
 
 architecture arc of signExtension is
 -- begin solution:
+signal s_immediateImm, s_storeImm, s_unsignedImm, s_branchImm, s_jumpImm : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
 begin
-    po_immediateImm(11 downto 0) <= pi_instr(31 downto 20);
-    po_immediateImm(31 downto 12) <= (others => pi_instr(31));
+    s_immediateImm(11 downto 0) <= pi_instr(31 downto 20);
+    s_immediateImm(31 downto 12) <= (others => pi_instr(31));
 
-    po_storeImm(4 downto 0) <= pi_instr(11 downto 7);
-    po_storeImm(11 downto 5) <= pi_instr(31 downto 25);
-    po_storeImm(31 downto 12) <= (others => pi_instr(31));
+    s_storeImm(4 downto 0) <= pi_instr(11 downto 7);
+    s_storeImm(11 downto 5) <= pi_instr(31 downto 25);
+    s_storeImm(31 downto 12) <= (others => pi_instr(31));
 
-    po_unsignedImm(31 downto 12) <= pi_instr(31 downto 12);
-    po_unsignedImm(11 downto 0) <= (others => '0');
+    s_unsignedImm(31 downto 12) <= pi_instr(31 downto 12);
+    s_unsignedImm(11 downto 0) <= (others => '0');
     
-    po_branchImm(10 downto 0) <= pi_instr(30 downto 25) & pi_instr(11 downto 8) & '0';
-    po_branchImm(11) <= pi_instr(7);
-    po_branchImm(12) <= pi_instr(31);
-    po_branchImm(31 downto 13) <= (others => pi_instr(31));
+    s_branchImm(10 downto 0) <= pi_instr(30 downto 25) & pi_instr(11 downto 8) & '0';
+    s_branchImm(11) <= pi_instr(7);
+    s_branchImm(12) <= pi_instr(31);
+    s_branchImm(31 downto 13) <= (others => pi_instr(31));
 
-    po_jumpImm(10 downto 0) <= pi_instr(30 downto 21) & '0';
-    po_jumpImm(11) <= pi_instr(20);
-    po_jumpImm(19 downto 12) <= pi_instr(19 downto 12);
-    po_jumpImm(20) <= pi_instr(31);
-    po_jumpImm(31 downto 21) <= (others => pi_instr(31));
+    s_jumpImm(10 downto 0) <= pi_instr(30 downto 21) & '0';
+    s_jumpImm(11) <= pi_instr(20);
+    s_jumpImm(19 downto 12) <= pi_instr(19 downto 12);
+    s_jumpImm(20) <= pi_instr(31);
+    s_jumpImm(31 downto 21) <= (others => pi_instr(31));
+
+    with pi_instr(6 downto 0) select po_Imm <=
+      s_immediateImm when JAL_INS_OP,
+      s_immediateImm when L_INS_OP,
+      s_immediateImm when I_INS_OP,
+      s_storeImm when S_INS_OP,
+      s_unsignedImm when LUI_INS_OP,
+      s_unsignedImm when AUIPC_INS_OP,
+      s_branchImm when B_INS_OP,
+      s_jumpImm when JAL_INS_OP;
  -- end solution!!
 end architecture arc;
