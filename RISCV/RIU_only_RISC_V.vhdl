@@ -47,7 +47,8 @@ architecture structure of ri_only_RISC_V is
   signal controlWord_in : controlword := control_word_init;
   signal controlWord_decode : controlword := control_word_init;
   signal t_reg, s_reg : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-  signal immediateImm : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal immediate : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal s_immImm, s_unsignedImm, s_jumpImm, s_storeImm, s_branchImm : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   -- Execute
   signal controlWord_exec : controlword := control_word_init;
   signal d_execute : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
@@ -141,8 +142,22 @@ begin
   signextender_inst : entity work.signExtension
   port map(
     pi_instr => ir_data_out,
-    po_imm => immediateImm
+    po_immediateImm => s_immImm,
+    po_storeImm => s_storeImm,
+    po_unsignedImm => s_unsignedImm, 
+    po_branchImm => s_branchImm, 
+    po_jumpImm => s_jumpImm
   );
+  with pi_instruction(6 downto 0) select immediate <=
+    s_storeImm when S_INS_OP,
+    s_immImm when JALR_INS_OP,
+    s_immImm when L_INS_OP,
+    s_immImm when I_INS_OP,
+    s_unsignedImm when LUI_INS_OP,
+    s_unsignedImm when AUIPC_INS_OP,
+    s_branchImm when B_INS_OP,
+    s_jumpImm when JAL_INS_OP;
+
 -- end solution!!
 
 
@@ -186,7 +201,7 @@ begin
   port map(
     pi_clk => pi_clk,
     pi_rst => pi_rst,
-    pi_data => immediateImm,
+    pi_data => immediate,
     po_data => immediateImm_exec
   );
 -- end solution!!
