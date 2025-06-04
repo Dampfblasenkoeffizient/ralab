@@ -82,20 +82,23 @@ architecture arc of decoder is
                         end if;    
                     when uFormat =>
                         po_controlWord <= control_word_init;
-                        po_controlWord.I_IMM_SEL <= '1' when opcode = LUI_INS_OP or opcode = JAL_INS_OP;
+                        po_controlWord.I_IMM_SEL <= '1' when opcode = LUI_INS_OP;
+                        po_controlWord.REG_WRITE <= '1';
                         po_controlWord.WB_SEL <= "01" when opcode = LUI_INS_OP;
                         po_controlWord.A_SEL <= '1' when opcode = AUIPC_INS_OP;
-                        po_controlWord.PC_SEL <= '1' when opcode = JAL_INS_OP;
-                        po_controlWord.WB_SEL <= "10" when opcode = JAL_INS_OP;
+                        po_controlWord.ALU_OP <= ADD_ALU_OP when opcode = AUIPC_INS_OP;
                     when bFormat =>
                         po_controlWord <= control_word_init;
                     when sFormat =>
                         po_controlWord <= control_word_init;
                     when jFormat =>
-                        po_controlWord <= control_word_init; -- muss j jetzt schon gemacht werden ?? dachte da gehoert JAL hin...
-                        --po_controlWord.I_IMM_SEL <= '1';
-                        --po_controlWord.PC_SEL <= '1';
-                        --po_controlWord.WB_SEL <= "10";
+                        po_controlWord <= control_word_init;
+                        po_controlWord.I_IMM_SEL <= '1';
+                        po_controlWord.ALU_OP <= ADD_ALU_OP;
+                        po_controlWord.REG_WRITE <= '1';
+                        po_controlWord.PC_SEL <= '1';
+                        po_controlWord.WB_SEL <= "10";
+                        po_controlWord.A_SEL <= '1';
                     when nullFormat =>
                         po_controlWord <= control_word_init;
                 end case;
