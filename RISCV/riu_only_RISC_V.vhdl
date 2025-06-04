@@ -1,4 +1,4 @@
--- Laboratory RA solutions/versuch4
+-- Laboratory RA solutions/versuch6
 -- Sommersemester 25
 -- Group Details
 -- Lab Date: 04.06.2025
