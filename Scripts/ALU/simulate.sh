@@ -26,4 +26,5 @@ ghdl -a --std=08 Testbenches/ALU/my_alu_tb.vhdl
 ghdl -e --std=08 my_alu_tb
 
 # Run 
-ghdl -r --std=08 my_alu_tb
+ghdl -r --std=08 my_alu_tb --wave=alu.ghw
+gtkwave alu.ghw
