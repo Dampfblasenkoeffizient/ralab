@@ -21,4 +21,4 @@ begin
         pi_b when "01",
         pi_c when "10",
         pi_d when "11";
-end architecture    
+end architecture;    
