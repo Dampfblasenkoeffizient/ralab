@@ -7,7 +7,7 @@
 
 -- ========================================================================
 -- Author:       Marcel Rieß
--- Last updated: 14.05.2025
+-- Last updated: 04.06.2025
 -- Description:  RUI-Only-RISC-V for an incomplete RV32I implementation, 
 --               support only R/I/U-Instructions. 
 -- ========================================================================
