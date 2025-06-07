@@ -1,10 +1,3 @@
--- Laboratory RA solutions/versuch71
--- Sommersemester 25
--- Group Details
--- Lab Date:
--- 1. Participant First and Last Name: 
--- 2. Participant First and Last Name:
-
 -- ========================================================================
 -- Author:       Marcel Rieß
 -- Last updated: 23.05.2025
@@ -335,9 +328,9 @@ BEGIN
       IF (cycle = 24) THEN check_register(       80,15, "JAL"  );END IF;
       IF (cycle = 28) THEN check_register(        9, 1, "ADDI" );END IF;
       IF (cycle = 29) THEN check_register(        8, 2, "ADDI" );END IF;
-      IF (cycle = 30) THEN check_register(        9,10, "OR"   );END IF;
-      IF (cycle = 31) THEN check_register(       17, 8, "ADD"  ); END IF;
-      IF (cycle = 32) THEN check_register(        1,11, "SUB"  ); END IF;
+      IF (cycle = 33) THEN check_register(        9,10, "OR"   );END IF;
+      IF (cycle = 32) THEN check_register(       17, 8, "ADD"  ); END IF;
+      IF (cycle = 33) THEN check_register(        1,11, "SUB"  ); END IF;
       IF (cycle = 36) THEN check_register(       -1,12, "SUB"  );END IF;
       IF (cycle = 38) THEN check_register(       25,12, "ADD"  );END IF;
       IF (cycle = 39) THEN check_register(       -1,12, "SUB"  );END IF;
