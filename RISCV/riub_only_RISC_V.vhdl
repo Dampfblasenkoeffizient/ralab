@@ -75,7 +75,7 @@ begin
 
 
   n_clk <= not pi_clk;
-  flush <= b_sel_mem OR pi_rst OR controlWord_mem.IS_JUMP;
+  flush <= b_sel_mem OR pi_rst OR controlWord_mem.PC_SEL;
 
 ---********************************************************************
 ---* program counter adder and pc-register
@@ -285,7 +285,7 @@ begin
   mem_register_cw : entity work.ControlWordRegister
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => pi_rst,
     pi_controlWord => controlWord_exec,
     po_controlWord => controlWord_mem
   );
@@ -293,7 +293,7 @@ begin
   mem_register_d : entity work.PipelineRegister generic map(REG_ADR_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => pi_rst,
     pi_data => d_execute,
     po_data => d_mem
   );
@@ -301,7 +301,7 @@ begin
   mem_register_wb_out : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => pi_rst,
     pi_data => wb_mux_out,
     po_data => wb_out_mem
   );
@@ -309,7 +309,7 @@ begin
   mem_register_alu_out : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => pi_rst,
     pi_data => alu_out,
     po_data => alu_out_mem
   );
@@ -317,7 +317,7 @@ begin
   mem_register_immediate : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => pi_rst,
     pi_data => immediate_exec,
     po_data => immediate_mem
   );
@@ -325,7 +325,7 @@ begin
   mem_register_pc_plus4 : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => pi_rst,
     pi_data => pc_plus4,
     po_data => pc_plus4_mem
   );  
