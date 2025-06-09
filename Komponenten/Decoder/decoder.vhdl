@@ -1,7 +1,7 @@
 -- Laboratory RA solutions/versuch6
 -- Sommersemester 25
 -- Group Details
--- Lab Date: 04.06.2025
+-- Lab Date: 11.06.2025
 -- 1. Participant First and Last Name: Paul Riedel
 -- 2. Participant First and Last Name: Clara Heilig
 
@@ -89,6 +89,25 @@ architecture arc of decoder is
                             po_controlWord.ALU_OP <= ADD_ALU_OP;
                         end if;
                     when bFormat =>
+                    po_controlWord.IS_BRANCH <= '1';
+                        case funct3 is
+                            when FUNC3_BNE =>
+                                po_controlWord.ALU_OP <= SUB_ALU_OP; 
+                                po_controlWord.CMP_RESULT <= '1';
+                            when FUNC3_BEQ =>
+                                po_controlWord.ALU_OP <= SUB_ALU_OP;
+                            when FUNC3_BLT =>
+                                po_controlWord.ALU_OP <= SLT_ALU_OP;
+                                po_controlWord.CMP_RESULT <= '1';
+                            when FUNC3_BLTU =>
+                                po_controlWord.ALU_OP <= SLTU_ALU_OP;
+                                po_controlWord.CMP_RESULT <= '1';
+                            when FUNC3_BGE =>
+                                po_controlWord.ALU_OP <= SLT_ALU_OP; -- wie blt umsetzen, mit cmp_result unterscheiden
+                            when FUNC3_BGEU =>
+                                po_controlWord.ALU_OP <= SLTU_ALU_OP;
+                            when others =>
+                            end case;
                     when sFormat =>
                     when jFormat =>
                         po_controlWord.I_IMM_SEL <= '1';
