@@ -14,7 +14,8 @@ entity my_alu is generic(
         pi_opb       : in  std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0);
         pi_opcode    : in  std_logic_vector(G_ALU_OPCODE_WIDTH - 1 downto 0);
         po_result    : out std_logic_vector(G_DATA_WIDTH_GEN - 1 downto 0) := (others => '0');
-        po_carryOut  : out std_logic := '0'
+        po_carryOut  : out std_logic := '0';
+        po_zero      : out std_logic := '0'
     );
 end my_alu;
 
@@ -60,5 +61,6 @@ architecture my_alu_arch of my_alu is
 
                  (others => '0');
     po_carryOut <= s_carry;
+    po_zero <= '1' when po_result = '0' else '0';
 end architecture my_alu_arch;
     
