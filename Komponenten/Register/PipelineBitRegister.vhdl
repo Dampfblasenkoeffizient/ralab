@@ -1,4 +1,6 @@
--- Clara Heilig
+-- Paul Riedel
+-- 10.06.2025 V7
+
 library ieee;
 use ieee.std_logic_1164.all;
 

@@ -1,4 +1,4 @@
-# Paul Riedel
+# 10.06.2025 V7
 
 ghdl --clean
 ghdl -a --std=08 Packages/constant_package.vhdl
