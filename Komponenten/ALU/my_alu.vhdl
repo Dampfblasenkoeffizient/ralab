@@ -1,6 +1,7 @@
 -- Paul Riedel
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use work.constant_package.all;
 
 
@@ -61,6 +62,6 @@ architecture my_alu_arch of my_alu is
 
                  (others => '0');
     po_carryOut <= s_carry;
-    po_zero <= '1' when po_result = '0' else '0';
+    po_zero <= '1' when po_result = std_logic_vector(to_unsigned(0, G_DATA_WIDTH_GEN)) else '0';
 end architecture my_alu_arch;
     

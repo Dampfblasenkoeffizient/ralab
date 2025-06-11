@@ -17,21 +17,22 @@ library ieee;
   use work.constant_package.all;
   use work.types.all;
 
-entity riu_only_RISC_V is
+entity riub_only_RISC_V is
   port (
     pi_rst         : in    std_logic;
     pi_clk         : in    std_logic;
     pi_instruction : in    memory := (others => (others => '0'));
     po_registersOut : out   registerMemory := (others => (others => '0'))
   );
-end entity riu_only_RISC_V;
+end entity riub_only_RISC_V;
 
-architecture structure of riu_only_RISC_V is
+architecture structure of riub_only_RISC_V is
 
   constant PERIOD                : time                                            := 10 ns;
   constant ADD_FOUR_TO_ADDRESS   : std_logic_vector(WORD_WIDTH - 1 downto 0)       := std_logic_vector(to_signed((4), WORD_WIDTH));
   -- signals
   signal n_clk : std_logic := '0';
+  signal flush : std_logic := '0';
   -- PC
   signal pc_data_in, pc_adder_out : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal pc_data_out : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
@@ -76,13 +77,18 @@ begin
 ---********************************************************************
 -- begin solution:  
   n_clk <= not pi_clk;
+  flush <= b_sel_mem OR pi_rst OR controlWord_mem.PC_SEL;
 
-  pc_in_select_mux : entity work.gen_mux generic map(WORD_WIDTH)
+    -- Flushing-Konzept: PipelineRegisters in der ID Phase werden resetted, indem sie durch flush statt pi_rst angesteuert werden
+    --                   flush ist dabei wie oben geschrieben definiert, sodass pi_rst immernoch zu einem rst führt
+
+  pc_in_select_mux : entity work.fourWayMux
   port map(
-    pi_sel => controlWord_mem.PC_SEL,
-    pi_first => pc_adder_out,
-    pi_second => alu_out_mem,
-    po_res => pc_data_in
+    pi_sel => (controlWord_mem.PC_SEL & b_sel_mem),
+    pi_0 => pc_adder_out,
+    pi_1 => pc_branch_mem,
+    pi_2 => alu_out_mem,
+    po => pc_data_in
   );
 
   pc_adder : entity work.add_alu generic map(WORD_WIDTH)
@@ -123,7 +129,7 @@ begin
   instruction_register : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => pi_rst,
+    pi_rst => flush,
     pi_data => ir_data_in,
     po_data => ir_data_out
   );
@@ -131,7 +137,7 @@ begin
   IF_register_PC : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => pi_rst,
+    pi_rst => flush,
     pi_data => pc_data_out,
     po_data => pc_decode
   );
@@ -176,10 +182,11 @@ begin
 ---* Pipeline-Register (ID -> EX) 
 ---********************************************************************
 -- begin solution: 
+
   execute_register_cw : entity work.ControlWordRegister
   port map(
-    pi_rst => pi_rst,
     pi_clk => pi_clk,
+    pi_rst => flush,
     pi_controlWord => controlWord_decode,
     po_controlWord => controlWord_exec
   );
@@ -187,7 +194,7 @@ begin
   execute_register_d : entity work.PipelineRegister generic map(REG_ADR_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => pi_rst,
+    pi_rst => flush,
     pi_data => d,
     po_data => d_execute
   );
@@ -195,7 +202,7 @@ begin
   execute_register_t_alu : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => pi_rst,
+    pi_rst => flush,
     pi_data => t_reg,
     po_data => t_alu
   );
@@ -203,7 +210,7 @@ begin
   execute_register_s_alu : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => pi_rst,
+    pi_rst => flush,
     pi_data => s_reg,
     po_data => s_alu
   );
@@ -211,7 +218,7 @@ begin
   execute_register_immediateImm : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => pi_rst,
+    pi_rst => flush,
     pi_data => immediate,
     po_data => immediate_exec
   );
@@ -219,7 +226,7 @@ begin
   execute_register_pc : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => pi_rst,
+    pi_rst => flush,
     pi_data => pc_decode,
     po_data => pc_execute
   );
@@ -262,7 +269,7 @@ begin
     po_zero => alu_iszero_exec
   );
 
-  execute_branchAdress_adder : entity work.add_alu
+  execute_branchAdress_adder : entity work.add_alu generic map(WORD_WIDTH)
   port map(
     pi_opa => pc_execute,
     pi_opb => immediate_exec,
@@ -334,7 +341,7 @@ begin
     po_data => pc_branch_mem
   );
 
-  mem_register_b_sel : entity work.PipelineRegister generic map (WORD_WIDTH)
+  mem_register_b_sel : entity work.PipelineBitReg
   port map(
     pi_clk => pi_clk,
     pi_rst => pi_rst,
