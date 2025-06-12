@@ -120,7 +120,6 @@ architecture arc of decoder is
                         po_controlWord.PC_SEL <= '1';
                         po_controlWord.WB_SEL <= "10";
                         po_controlWord.A_SEL <= '1';
-                        po_controlWord.IS_JUMP <= '1';
                     when nullFormat =>
                 end case;
         end process;
