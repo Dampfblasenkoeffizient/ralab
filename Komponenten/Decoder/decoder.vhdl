@@ -66,19 +66,28 @@ architecture arc of decoder is
                         -- reg_write bit set to enable writing of the results in the r register for R-type instructions
                         po_controlWord.ALU_OP <= funct7(5) & funct3;
                         po_controlWord.REG_WRITE <= '1';
+                        report "asdf" severity error;
                     when iFormat =>
-                        if opcode = JALR_INS_OP then
-                            po_controlWord.ALU_OP <= ADD_ALU_OP;
-                            po_controlWord.I_IMM_SEL <= '1';
-                            po_controlWord.REG_WRITE <= '1';
-                            po_controlWord.PC_SEL <= '1';
-                            po_controlWord.WB_SEL <= "10";
-                        else
-                            po_controlWord.ALU_OP(3) <= funct7(5) when funct3 = SRA_ALU_OP(2 downto 0);
-                            po_controlWord.ALU_OP(2 downto 0) <= funct3;
-                            po_controlWord.I_IMM_SEL <= '1';
-                            po_controlWord.REG_WRITE <= '1';
-                        end if;
+                        case opcode is
+                            when JALR_INS_OP =>
+                                po_controlWord.I_IMM_SEL <= '1';
+                                po_controlWord.WB_SEL <= "10";
+                                po_controlWord.ALU_OP <= ADD_ALU_OP;
+                                po_controlWord.PC_SEL <= '1';
+                                po_controlWord.REG_WRITE <= '1';
+                            when I_INS_OP =>
+                                po_controlWord.ALU_OP(3) <= funct7(5) when funct3 = SRA_ALU_OP(2 downto 0);
+                                po_controlWord.ALU_OP(2 downto 0) <= funct3;
+                                po_controlWord.I_IMM_SEL <= '1';
+                                po_controlWord.REG_WRITE <= '1';
+                            when L_INS_OP =>
+                                po_controlWord.REG_WRITE <= '1';
+                                po_controlWord.I_IMM_SEL <= '1';
+                                po_controlWord.MEM_READ <= '1';
+                                po_controlWord.WB_SEL <= "11";
+                                po_controlWord.MEM_CTR <= funct3;
+                            when others => 
+                        end case;
                     when uFormat =>
                         po_controlWord.I_IMM_SEL <= '1';
                         po_controlWord.REG_WRITE <= '1';
@@ -113,6 +122,9 @@ architecture arc of decoder is
                         end case;
 
                     when sFormat =>
+                        po_controlWord.MEM_CTR <= funct3;
+                        po_controlWord.MEM_WRITE <= '1';
+                        po_controlWord.I_IMM_SEL <= '1';
                     when jFormat =>
                         po_controlWord.I_IMM_SEL <= '1';
                         po_controlWord.ALU_OP <= ADD_ALU_OP;

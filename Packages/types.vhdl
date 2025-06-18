@@ -1,4 +1,4 @@
--- Laboratory RA solutions/versuch71
+-- Laboratory RA solutions/versuch8
 -- Sommersemester 25
 -- Group Details
 -- Lab Date:
@@ -23,10 +23,12 @@ package types is
     REG_WRITE    : std_logic;
     CMP_RESULT   : std_logic;
     IS_BRANCH    : std_logic;
-    IS_JUMP    : std_logic;
     A_SEL        : std_logic; -- used as a MUX selector for ALU
     PC_SEL        : std_logic; -- used as a MUX selector for PC
     WB_SEL       :std_logic_vector( 1 downto 0);
+    MEM_CTR    : std_logic_vector(2 downto 0);                    
+    MEM_READ   : std_logic;
+    MEM_WRITE  : std_logic;
   end record controlWord;
 
   -- allows initialization of control words, used in decoder
@@ -39,8 +41,10 @@ package types is
   IS_BRANCH => '0',
   CMP_RESULT => '0',
   PC_SEL   => '0',
-  IS_JUMP => '0',
-  WB_SEL   => "00"
+  WB_SEL   => (others => '0'),
+  MEM_CTR     => (others => '0'),
+  MEM_READ    => '0',
+  MEM_WRITE   => '0'
   );
 
   -- enum containig all instruction formats, used in decoder
