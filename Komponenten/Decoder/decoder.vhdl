@@ -1,7 +1,7 @@
--- Laboratory RA solutions/versuch7_2
+-- Laboratory RA solutions/versuch8
 -- Sommersemester 25
 -- Group Details
--- Lab Date: 10.06.2025
+-- Lab Date: 25.06.2025
 -- 1. Participant First and Last Name: Paul Riedel
 -- 2. Participant First and Last Name: Clara Heilig
 
@@ -66,7 +66,6 @@ architecture arc of decoder is
                         -- reg_write bit set to enable writing of the results in the r register for R-type instructions
                         po_controlWord.ALU_OP <= funct7(5) & funct3;
                         po_controlWord.REG_WRITE <= '1';
-                        report "asdf" severity error;
                     when iFormat =>
                         case opcode is
                             when JALR_INS_OP =>

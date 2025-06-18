@@ -1,7 +1,7 @@
--- Laboratory RA solutions/versuch8
+-- Laboratory RA solutions/versuch7_2
 -- Sommersemester 25
 -- Group Details
--- Lab Date: 25.06.2025
+-- Lab Date: 10.06.2025
 -- 1. Participant First and Last Name: Clara Heilig
 -- 2. Participant First and Last Name: Paul Riedel
 
@@ -18,17 +18,16 @@ library ieee;
   use work.constant_package.all;
   use work.types.all;
 
-entity riubs_only_RISC_V is
+entity riub_only_RISC_V is
   port (
     pi_rst         : in    std_logic;
     pi_clk         : in    std_logic;
     pi_instruction : in    memory := (others => (others => '0'));
-    po_registersOut : out   registerMemory := (others => (others => '0'));
-    po_debugdatamemory : out memory :=(others => (others => '0'))
+    po_registersOut : out   registerMemory := (others => (others => '0'))
   );
-end entity riubs_only_RISC_V;
+end entity riub_only_RISC_V;
 
-architecture structure of riubs_only_RISC_V is
+architecture structure of riub_only_RISC_V is
 
   constant PERIOD                : time                                            := 10 ns;
   constant ADD_FOUR_TO_ADDRESS   : std_logic_vector(WORD_WIDTH - 1 downto 0)       := std_logic_vector(to_signed((4), WORD_WIDTH));
@@ -49,13 +48,13 @@ architecture structure of riubs_only_RISC_V is
   signal opcode : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := (others => '0');
   signal controlWord_in : controlword := control_word_init;
   signal controlWord_decode : controlword := control_word_init;
-  signal t_decode, s_decode : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal t_reg, s_reg : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal pc_decode, immediate, immediateImm, unsignedImm, jumpImm, branchImm : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   -- Execute
   signal controlWord_exec : controlword := control_word_init;
   signal d_execute : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
   signal alu_opcode : std_logic_vector(ALU_OPCODE_WIDTH - 1 downto 0) := (others => '0');
-  signal t_execute, s_execute : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal t_alu, s_alu : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal opa, opb : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal pc_execute, pc_plus4, alu_out, pc_branch : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal immediate_exec : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
@@ -63,14 +62,12 @@ architecture structure of riubs_only_RISC_V is
   -- mem
   signal controlWord_mem : controlword := control_word_init;
   signal d_mem : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
-  signal alu_out_mem, wb_out_mem, immediate_mem, pc_plus4_mem, pc_branch_mem, t_mem, mem_out : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal alu_out_mem, wb_out_mem, immediate_mem, pc_plus4_mem, pc_branch_mem : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0');
   signal b_sel_mem : std_logic := '0';
   -- WB
   signal controlWord_wb : controlword := control_word_init;
   signal d_wb : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0'); 
-  signal alu_out_wb, immediate_wb, pc_plus4_wb, wb_mux_out, mem_out_wb : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0'); 
-
-  -- debug
+  signal alu_out_wb, immediate_wb, pc_plus4_wb, wb_mux_out : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0'); 
 
   -- begin solution:
   -- end solution!!
@@ -206,16 +203,16 @@ begin
   port map(
     pi_clk => pi_clk,
     pi_rst => flush,
-    pi_data => t_decode,
-    po_data => t_execute
+    pi_data => t_reg,
+    po_data => t_alu
   );
 
   execute_register_s_alu : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
     pi_rst => flush,
-    pi_data => s_decode,
-    po_data => s_execute
+    pi_data => s_reg,
+    po_data => s_alu
   );
 
   execute_register_immediateImm : entity work.PipelineRegister generic map(WORD_WIDTH)
@@ -257,7 +254,7 @@ begin
   mux_alu_oba : entity work.gen_mux generic map(WORD_WIDTH)
   port map(
     pi_sel => controlWord_exec.A_SEL,
-    pi_first => s_execute,
+    pi_first => s_alu,
     pi_second => pc_execute,
     po_res => opa
   );
@@ -265,7 +262,7 @@ begin
   mux_alu_opb : entity work.gen_mux generic map(WORD_WIDTH)
   port map(
     pi_sel => controlWord_exec.I_IMM_SEL,
-    pi_first => t_execute,
+    pi_first => t_alu,
     pi_second => immediate_exec,
     po_res => opb
   );
@@ -349,32 +346,12 @@ begin
     po_data => b_sel_mem
   ); 
 
-  mem_register_t : entity work.PipelineRegister generic map(WORD_WIDTH)
-  port map(
-    pi_clk => pi_clk,
-    pi_rst => pi_rst,
-    pi_data => t_execute,
-    po_data => t_mem
-  ); 
-
 -- end solution!!
 
 ---********************************************************************
 ---* memory phase
 ---********************************************************************
 
-  main_memory : entity work.data_memory generic map(ADR_WIDTH)
-    port map(
-      pi_adr => alu_out_mem,
-      pi_clk => n_clk,
-      pi_rst => pi_rst,
-      pi_ctrmem => controlWord_mem.MEM_CTR,
-      pi_write => controlWord_mem.MEM_WRITE,
-      pi_read => controlWord_mem.MEM_READ,
-      pi_writedata => t_mem,
-      po_readdata => mem_out,
-      po_debugdatamemory => po_debugdatamemory
-    );
 
 ---********************************************************************
 ---* Pipeline-Register (MEM -> WB) 
@@ -419,14 +396,6 @@ begin
     pi_data => pc_plus4_mem,
     po_data => pc_plus4_wb
   );  
-    
-  wb_register_mem_out : entity work.PipelineRegister generic map(WORD_WIDTH)
-  port map(
-    pi_clk => pi_clk,
-    pi_rst => pi_rst,
-    pi_data => mem_out,
-    po_data => mem_out_wb
-  );  
 -- end solution!!
 
 ---********************************************************************
@@ -439,7 +408,6 @@ begin
     pi_0 => alu_out_wb,
     pi_1 => immediate_wb,
     pi_2 => pc_plus4_wb,
-    pi_3 => mem_out_wb,
 
     po => wb_mux_out
   );
@@ -457,8 +425,8 @@ begin
     pi_readRegAddr1 => s,
     pi_readRegAddr2 => t,
     pi_writeRegAddr => d_wb,
-    po_readRegData1 => s_decode,
-    po_readRegData2 => t_decode,
+    po_readRegData1 => s_reg,
+    po_readRegData2 => t_reg,
     po_registerOut => po_registersOut
   );
     -- end solution!!
