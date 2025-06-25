@@ -1,7 +1,7 @@
 -- Laboratory RA solutions/versuch7_2
 -- Sommersemester 25
 -- Group Details
--- Lab Date: 10.06.2025
+-- Lab Date: 25.06.2025
 -- 1. Participant First and Last Name: Paul Riedel
 -- 2. Participant First and Last Name: Clara Heilig
 
@@ -76,6 +76,12 @@ architecture arc of decoder is
                         else
                             po_controlWord.ALU_OP(3) <= funct7(5) when funct3 = SRA_ALU_OP(2 downto 0);
                             po_controlWord.ALU_OP(2 downto 0) <= funct3;
+                            if opcode = L_INS_OP then
+                                po_controlWord.ALU_OP <= ADD_ALU_OP;
+                                po_controlWord.MEM_CTR <= funct3;
+                                po_controlWord.MEM_READ <= '1';
+                                po_controlWord.WB_SEL <= "11";
+                            end if;
                             po_controlWord.I_IMM_SEL <= '1';
                             po_controlWord.REG_WRITE <= '1';
                         end if;
@@ -111,8 +117,11 @@ architecture arc of decoder is
                                 po_controlWord.CMP_RESULT <= '0';
                             when others =>
                         end case;
-
                     when sFormat =>
+                        po_controlWord.ALU_OP <= ADD_ALU_OP;
+                        po_controlWord.MEM_CTR <= funct3;
+                        po_controlWord.I_IMM_SEL <= '1';
+                        po_controlWord.MEM_WRITE <= '1';
                     when jFormat =>
                         po_controlWord.I_IMM_SEL <= '1';
                         po_controlWord.ALU_OP <= ADD_ALU_OP;
