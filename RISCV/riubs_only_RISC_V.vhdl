@@ -349,6 +349,14 @@ begin
     po_data => b_sel_mem
   ); 
 
+  mem_register_t : entity work.PipelineRegister generic map(WORD_WIDTH)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => pi_rst,
+    pi_data => t_alu,
+    po_data => t_mem
+  );
+
 -- end solution!!
 
 ---********************************************************************
