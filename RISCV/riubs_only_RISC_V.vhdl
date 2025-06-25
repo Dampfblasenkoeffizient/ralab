@@ -50,7 +50,7 @@ architecture structure of riubs_only_RISC_V is
   signal controlWord_in : controlword := control_word_init;
   signal controlWord_decode : controlword := control_word_init;
   signal t_decode, s_decode : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-  signal pc_decode, immediate, immediateImm, unsignedImm, jumpImm, branchImm : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal pc_decode, immediate, immediateImm, unsignedImm, jumpImm, branchImm, storeImm : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   -- Execute
   signal controlWord_exec : controlword := control_word_init;
   signal d_execute : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
@@ -170,13 +170,15 @@ begin
     po_immediateImm => immediateImm,
     po_unsignedImm => unsignedImm,
     po_jumpImm => jumpImm,
-    po_branchImm => branchImm
+    po_branchImm => branchImm,
+    po_storeImm => storeImm
   );
 
   immediate <=  immediateImm when opcode = I_INS_OP  or opcode = JALR_INS_OP else
                 unsignedImm when opcode = LUI_INS_OP or opcode = AUIPC_INS_OP else
                 jumpImm when opcode = JAL_INS_OP else
-                branchImm when opcode = B_INS_OP;
+                branchImm when opcode = B_INS_OP else
+                storeImm when opcode = S_INS_OP;
 
 
 -- end solution!!
