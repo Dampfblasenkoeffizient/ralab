@@ -33,8 +33,8 @@ architecture structure of riubs_only_RISC_V is
   constant PERIOD                : time                                            := 10 ns;
   constant ADD_FOUR_TO_ADDRESS   : std_logic_vector(WORD_WIDTH - 1 downto 0)       := std_logic_vector(to_signed((4), WORD_WIDTH));
   -- signals
-  signal n_clk : std_logic := '0';
-  signal flush : std_logic := '0';
+  signal s_n_clk : std_logic := '0';
+  signal s_flush : std_logic := '0';
 
   -- PC
   signal pc_data_in, pc_adder_out : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
@@ -45,21 +45,31 @@ architecture structure of riubs_only_RISC_V is
   -- Decode
   signal funct7 : std_logic_vector(6 downto 0) := (others => '0');
   signal funct3 : std_logic_vector(2 downto 0) := (others => '0');
-  signal t, s, d : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
+  signal s_t, s_s, s_d : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
   signal opcode : std_logic_vector(OPCODE_WIDTH - 1 downto 0) := (others => '0');
   signal controlWord_in : controlword := control_word_init;
   signal controlWord_decode : controlword := control_word_init;
   signal t_decode, s_decode : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal pc_decode, immediate, immediateImm, unsignedImm, jumpImm, branchImm, storeImm : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+
+  signal s_byp_rs1_sel, s_byp_rs2_sel : std_logic_vector(1 downto 0) := "00";
+  signal s_byp_rs1_MEM, s_byp_rs2_MEM : std_logic := '0';
+
   -- Execute
   signal controlWord_exec : controlword := control_word_init;
   signal d_execute : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
   signal alu_opcode : std_logic_vector(ALU_OPCODE_WIDTH - 1 downto 0) := (others => '0');
   signal t_execute, s_execute : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-  signal opa, opb : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal opa, opb, opa_presel, opb_presel : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal pc_execute, pc_plus4, alu_out, pc_branch : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal immediate_exec : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal alu_zero, b_sel : std_logic := '0';
+
+  signal s_byp_rs1_sel_exec, s_byp_rs2_sel_exec : std_logic_vector(1 downto 0) := "00";
+  signal s_byp_rs1_MEM_exec, s_byp_rs2_MEM_exec : std_logic := '0';
+
+  signal s_byp_rs1_exec, s_byp_rs2_exec : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+
   -- mem
   signal controlWord_mem : controlword := control_word_init;
   signal d_mem : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
@@ -70,15 +80,18 @@ architecture structure of riubs_only_RISC_V is
   signal d_wb : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0'); 
   signal alu_out_wb, immediate_wb, pc_plus4_wb, wb_mux_out, mem_out_wb : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0'); 
 
-  -- debug
+  -- post_WB
+  signal post_wb : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0');
+
+  -- bypass
 
   -- begin solution:
   -- end solution!!
 begin
 
 
-  n_clk <= not pi_clk;
-  flush <= b_sel_mem OR pi_rst OR controlWord_mem.PC_SEL;
+  s_n_clk <= not pi_clk;
+  s_flush <= b_sel_mem OR pi_rst OR controlWord_mem.PC_SEL;
 
 ---********************************************************************
 ---* program counter adder and pc-register
@@ -118,7 +131,7 @@ begin
   instruction_cache_inst : entity work.instruction_cache generic map(ADR_WIDTH)
   port map(
     pi_adr => pc_data_out,
-    pi_clk => n_clk,
+    pi_clk => s_n_clk,
     pi_rst => pi_rst,
     pi_instructionCache => pi_instruction,
     po_instruction => ir_data_in
@@ -132,7 +145,7 @@ begin
   instruction_register : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => s_flush,
     pi_data => ir_data_in,
     po_data => ir_data_out
   );
@@ -140,7 +153,7 @@ begin
   IF_register_PC : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => s_flush,
     pi_data => pc_data_out,
     po_data => pc_decode
   );
@@ -152,10 +165,10 @@ begin
 ---********************************************************************
 -- begin solution:
   funct7 <= ir_data_out(31 downto 25);
-  t <= ir_data_out(24 downto 20);
-  s <= ir_data_out(19 downto 15);
+  s_t <= ir_data_out(24 downto 20);
+  s_s <= ir_data_out(19 downto 15);
   funct3 <= ir_data_out(14 downto 12);
-  d <= ir_data_out(11 downto 7);
+  s_d <= ir_data_out(11 downto 7);
   opcode <= ir_data_out(6 downto 0);
 
   decoder_inst : entity work.decoder generic map(WORD_WIDTH)
@@ -180,6 +193,21 @@ begin
                 branchImm when opcode = B_INS_OP else
                 storeImm when opcode = S_INS_OP;
 
+  s_byp_rs1_sel <= "00" when s_s = "00000" else
+                   "01" when s_s = d_execute else
+                   "10" when s_s = d_mem else
+                   "11" when s_s = d_wb else
+                   "00";
+
+  s_byp_rs2_sel <= "00" when s_s = "00000" else
+                   "01" when s_t = d_execute else
+                   "10" when s_t = d_mem else
+                   "11" when s_t = d_wb else
+                   "00";
+
+  -- memory phase bypass selection                  
+  s_byp_rs1_MEM <= '1' when (s_s = d_mem) AND (controlWord_mem.MEM_READ = '1') else '0';
+  s_byp_rs2_MEM <= '1' when (s_t = d_mem) AND (controlWord_mem.MEM_READ = '1') else '0'; 
 
 -- end solution!!
 
@@ -191,7 +219,7 @@ begin
   execute_register_cw : entity work.ControlWordRegister
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => s_flush,
     pi_controlWord => controlWord_decode,
     po_controlWord => controlWord_exec
   );
@@ -199,15 +227,15 @@ begin
   execute_register_d : entity work.PipelineRegister generic map(REG_ADR_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
-    pi_data => d,
+    pi_rst => s_flush,
+    pi_data => s_d,
     po_data => d_execute
   );
 
   execute_register_t_alu : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => s_flush,
     pi_data => t_decode,
     po_data => t_execute
   );
@@ -215,7 +243,7 @@ begin
   execute_register_s_alu : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => s_flush,
     pi_data => s_decode,
     po_data => s_execute
   );
@@ -223,7 +251,7 @@ begin
   execute_register_immediateImm : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => s_flush,
     pi_data => immediate,
     po_data => immediate_exec
   );
@@ -231,9 +259,41 @@ begin
   execute_register_pc : entity work.PipelineRegister generic map(WORD_WIDTH)
   port map(
     pi_clk => pi_clk,
-    pi_rst => flush,
+    pi_rst => s_flush,
     pi_data => pc_decode,
     po_data => pc_execute
+  );
+
+  execute_register_byp_sel_1 : entity work.PipelineRegister generic map(2)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => s_flush,
+    pi_data => s_byp_rs1_sel,
+    po_data => s_byp_rs1_sel_exec
+  );
+
+  execute_register_byp_sel_2 : entity work.PipelineRegister generic map(2)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => s_flush,
+    pi_data => s_byp_rs2_sel,
+    po_data => s_byp_rs2_sel_exec
+  );
+
+  execute_register_byp_MEM_1 : entity work.PipelineBitRegister
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => s_flush,
+    pi_data => s_byp_rs1_MEM,
+    po_data => s_byp_rs1_MEM_exec
+  );
+
+  execute_register_byp_MEM_2 : entity work.PipelineBitRegister
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => s_flush,
+    pi_data => s_byp_rs2_MEM,
+    po_data => s_byp_rs2_MEM_exec
   );
 -- end solution!!
 
@@ -242,6 +302,9 @@ begin
 ---* execute phase
 ---********************************************************************
  -- begin solution:
+
+  -- branching
+
   execute_pcp4_adder : entity work.add_alu generic map(WORD_WIDTH)
   port map(
     pi_opa => pc_execute,
@@ -256,10 +319,37 @@ begin
     po_out => pc_branch
   );
 
+  -- bypass
+
+  s_byp_rs1_exec <= mem_out_wb when s_byp_rs1_MEM_exec else alu_out_wb;
+  s_byp_rs2_exec <= mem_out_wb when s_byp_rs2_MEM_exec else alu_out_wb;
+
+  bypass_mux_s : entity work.fourWayMux
+  port map(
+    pi_sel => s_byp_rs1_sel_exec,
+    pi_0 => s_execute,
+    pi_1 => alu_out_mem,
+    pi_2 => s_byp_rs1_exec,
+    pi_3 => post_wb,
+    po => opa_presel
+  );
+
+  bypass_mux_t : entity work.fourWayMux
+  port map(
+    pi_sel => s_byp_rs2_sel_exec,
+    pi_0 => t_execute,
+    pi_1 => alu_out_mem,
+    pi_2 => s_byp_rs2_exec,
+    pi_3 => post_wb,
+    po => opb_presel
+  );
+
+  -- ALU
+
   mux_alu_oba : entity work.gen_mux generic map(WORD_WIDTH)
   port map(
     pi_sel => controlWord_exec.A_SEL,
-    pi_first => s_execute,
+    pi_first => opa_presel,
     pi_second => pc_execute,
     po_res => opa
   );
@@ -267,7 +357,7 @@ begin
   mux_alu_opb : entity work.gen_mux generic map(WORD_WIDTH)
   port map(
     pi_sel => controlWord_exec.I_IMM_SEL,
-    pi_first => t_execute,
+    pi_first => opb_presel,
     pi_second => immediate_exec,
     po_res => opb
   );
@@ -368,7 +458,7 @@ begin
   main_memory : entity work.data_memory generic map(ADR_WIDTH)
     port map(
       pi_adr => alu_out_mem,
-      pi_clk => n_clk,
+      pi_clk => s_n_clk,
       pi_rst => pi_rst,
       pi_ctrmem => controlWord_mem.MEM_CTR,
       pi_write => controlWord_mem.MEM_WRITE,
@@ -452,17 +542,25 @@ begin
 -- begin solution:
   reg_file : entity work.register_file generic map(WORD_WIDTH, REG_ADR_WIDTH)
   port map(
-    pi_clk => n_clk,
+    pi_clk => s_n_clk,
     pi_rst => pi_rst,
     pi_writeEnable => controlWord_wb.REG_WRITE,
     pi_writeRegData => wb_mux_out,
-    pi_readRegAddr1 => s,
-    pi_readRegAddr2 => t,
+    pi_readRegAddr1 => s_s,
+    pi_readRegAddr2 => s_t,
     pi_writeRegAddr => d_wb,
     po_readRegData1 => s_decode,
     po_readRegData2 => t_decode,
     po_registerOut => po_registersOut
   );
+
+  post_wb_register : entity work.PipelineRegister generic map(WORD_WIDTH)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => pi_rst,
+    pi_data => wb_mux_out,
+    po_data => post_wb
+  );  
     -- end solution!!
 ---********************************************************************
 ---********************************************************************    

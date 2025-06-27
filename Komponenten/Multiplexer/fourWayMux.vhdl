@@ -7,7 +7,7 @@ entity fourWayMux is
     port(
         pi_sel : in std_logic_vector(1 downto 0) := (others => '0');
         pi_0, pi_1, pi_2, pi_3 : in std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-        po : out std_logic_vector(WORD_WIDTH - 1 downto 0)
+        po : out std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0')
     );
 end entity;
 
