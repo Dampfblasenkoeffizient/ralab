@@ -1,7 +1,7 @@
 -- Laboratory RA solutions/versuch8
 -- Sommersemester 25
 -- Group Details
--- Lab Date: 25.06.2025
+-- Lab Date: 02.07.2025
 -- 1. Participant First and Last Name: Clara Heilig
 -- 2. Participant First and Last Name: Paul Riedel
 
@@ -18,7 +18,7 @@ library ieee;
   use work.constant_package.all;
   use work.types.all;
 
-entity riubs_only_RISC_V is
+entity riubs_bp_only_RISC_V is
   port (
     pi_rst         : in    std_logic;
     pi_clk         : in    std_logic;
@@ -26,9 +26,9 @@ entity riubs_only_RISC_V is
     po_registersOut : out   registerMemory := (others => (others => '0'));
     po_debugdatamemory : out memory :=(others => (others => '0'))
   );
-end entity riubs_only_RISC_V;
+end entity riubs_bp_only_RISC_V;
 
-architecture structure of riubs_only_RISC_V is
+architecture structure of riubs_bp_only_RISC_V is
 
   constant PERIOD                : time                                            := 10 ns;
   constant ADD_FOUR_TO_ADDRESS   : std_logic_vector(WORD_WIDTH - 1 downto 0)       := std_logic_vector(to_signed((4), WORD_WIDTH));
@@ -56,14 +56,14 @@ architecture structure of riubs_only_RISC_V is
   signal d_execute : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
   signal alu_opcode : std_logic_vector(ALU_OPCODE_WIDTH - 1 downto 0) := (others => '0');
   signal t_execute, s_execute : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-  signal opa, opb : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal s_ALUopa, s_ALUopb, opa, opb : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal pc_execute, pc_plus4, alu_out, pc_branch : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal immediate_exec : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
   signal alu_zero, b_sel : std_logic := '0';
   -- mem
   signal controlWord_mem : controlword := control_word_init;
   signal d_mem : std_logic_vector(REG_ADR_WIDTH - 1 downto 0) := (others => '0');
-  signal alu_out_mem, wb_out_mem, immediate_mem, pc_plus4_mem, pc_branch_mem, t_mem, mem_out : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0');
+  signal s_aluOutMEM, wb_out_mem, immediate_mem, pc_plus4_mem, pc_branch_mem, t_mem, s_readdataMEM : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0');
   signal b_sel_mem : std_logic := '0';
   -- WB
   signal controlWord_wb : controlword := control_word_init;
@@ -71,6 +71,13 @@ architecture structure of riubs_only_RISC_V is
   signal alu_out_wb, immediate_wb, pc_plus4_wb, wb_mux_out, mem_out_wb : std_logic_vector (WORD_WIDTH - 1 downto 0) := (others => '0'); 
 
   -- debug
+
+  signal s_byp_rs1_sel, s_byp_rs2_sel : std_logic_vector (1 downto 0) := (others => '0');
+  signal s_rs1_AdrID, s_rs2_AdrID, s_dAdrEX, s_dAdrMEM, s_dAdrWB : std_logic_vector (REG_ADR_WIDTH -1 downto 0) := (others => '0');
+
+  signal s_byp_rs1_MEM, s_byp_rs2_MEM : std_logic_vector (WORD_WIDTH -1 downto 0) := (others => '0');
+
+  signal s_byp_rs1_EX, s_byp_rs1_WB, s_byp_rs2_EX, s_byp_rs2_WB : std_logic_vector(WORD_WIDTH -1 downto 0) := (others => '0');
 
   -- begin solution:
   -- end solution!!
@@ -90,7 +97,7 @@ begin
     pi_sel => (controlWord_mem.PC_SEL & b_sel_mem),
     pi_0 => pc_adder_out,
     pi_1 => pc_branch_mem,
-    pi_2 => alu_out_mem,
+    pi_2 => s_aluOutMEM,
     po => pc_data_in
   );
 
@@ -157,6 +164,24 @@ begin
   funct3 <= ir_data_out(14 downto 12);
   d <= ir_data_out(11 downto 7);
   opcode <= ir_data_out(6 downto 0);
+
+  s_rs1_AdrID <= s;
+  s_byp_rs1_sel <= "01" when (s_rs1_AdrID = s_dAdrEX) else
+                   "10" when (s_rs1_AdrID = s_dAdrMEM) else
+                   "11" when (s_rs1_AdrID = s_dAdrWB) else
+                   "00";
+
+  s_byp_rs1_MEM <= s_readdataMEM when (s_rs1_AdrID = s_dAdrMEM) and (controlWord_mem.MEM_READ = '1')          
+                   else s_aluOutMEM;      
+
+  s_rs2_AdrID <= t;
+  s_byp_rs2_sel <= "01" when (s_rs2_AdrID = s_dAdrEX) else
+                   "10" when (s_rs2_AdrID = s_dAdrMEM) else
+                   "11" when (s_rs2_AdrID = s_dAdrWB) else
+                   "00";
+
+  s_byp_rs2_MEM <= s_readdataMEM when (s_rs2_AdrID = s_dAdrMEM) and (controlWord_mem.MEM_READ = '1')          
+                   else s_aluOutMEM;               
 
   decoder_inst : entity work.decoder generic map(WORD_WIDTH)
   port map(
@@ -272,10 +297,30 @@ begin
     po_res => opb
   );
 
+  FW_rs1_mux : entity work.fourWayMux generic map(WORD_WIDTH)
+  port map(
+    pi_sel => s_byp_rs1_sel,
+    pi_0 => opa,
+    pi_1 => s_byp_rs1_EX,
+    pi_2 => s_byp_rs1_MEM,
+    pi_3 => s_byp_rs1_WB,
+    po => s_ALUopa
+  );
+
+  FW_rs2_mux : entity work.fourWayMux generic map(WORD_WIDTH)
+  port map(
+    pi_sel => s_byp_rs2_sel,
+    pi_0 => opb,
+    pi_1 => s_byp_rs2_EX,
+    pi_2 => s_byp_rs2_MEM,
+    pi_3 => s_byp_rs2_WB,
+    po => s_ALUopb
+  );
+
   alu : entity work.my_alu generic map(WORD_WIDTH, ALU_OPCODE_WIDTH)
   port map(
-    pi_opa => opa,
-    pi_opb => opb,
+    pi_opa => s_ALUopa,
+    pi_opb => s_ALUopb,
     pi_opcode => controlWord_exec.ALU_OP,
     po_result => alu_out,
     po_zero => alu_zero
@@ -316,7 +361,7 @@ begin
     pi_clk => pi_clk,
     pi_rst => pi_rst,
     pi_data => alu_out,
-    po_data => alu_out_mem
+    po_data => s_aluOutMEM
   );
 
   mem_register_immediate : entity work.PipelineRegister generic map(WORD_WIDTH)
@@ -367,14 +412,14 @@ begin
 
   main_memory : entity work.data_memory generic map(ADR_WIDTH)
     port map(
-      pi_adr => alu_out_mem,
+      pi_adr => s_aluOutMEM,
       pi_clk => n_clk,
       pi_rst => pi_rst,
       pi_ctrmem => controlWord_mem.MEM_CTR,
       pi_write => controlWord_mem.MEM_WRITE,
       pi_read => controlWord_mem.MEM_READ,
       pi_writedata => t_mem,
-      po_readdata => mem_out,
+      po_readdata => s_readdataMEM,
       po_debugdatamemory => po_debugdatamemory
     );
 
@@ -402,7 +447,7 @@ begin
   port map(
     pi_clk => pi_clk,
     pi_rst => pi_rst,
-    pi_data => alu_out_mem,
+    pi_data => s_aluOutMEM,
     po_data => alu_out_wb
   );
 
@@ -426,7 +471,7 @@ begin
   port map(
     pi_clk => pi_clk,
     pi_rst => pi_rst,
-    pi_data => mem_out,
+    pi_data => s_readdataMEM,
     po_data => mem_out_wb
   );  
 -- end solution!!
