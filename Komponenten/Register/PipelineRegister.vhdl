@@ -7,7 +7,7 @@ entity PipelineRegister is
         registerWidth : integer
     );
     port (
-        pi_clk, pi_rst : in std_logic;
+        pi_clk, pi_rst, pi_stall : in std_logic := '0';
         pi_data : in std_logic_vector ((registerWidth -1) downto 0);
         po_data : out std_logic_vector ((registerWidth -1) downto 0) := (others => '0')
     );
@@ -18,6 +18,6 @@ architecture behavior of PipelineRegister is
         process(pi_clk, pi_rst)
             begin
                 po_data <= (others => '0') when pi_rst = '1' else
-                            pi_data when rising_edge(pi_clk);
+                            pi_data when rising_edge(pi_clk) and pi_stall = '0';
         end process;    
 end architecture;    

@@ -23,7 +23,7 @@ entity ControlWordRegister is
 
   port (
     pi_rst : in std_logic;
-    pi_clk : in std_logic;
+    pi_clk, pi_stall : in std_logic := '0';
     pi_controlWord : in controlWord := CONTROL_WORD_INIT; -- incoming control word
     po_controlWord : out controlWord := CONTROL_WORD_INIT -- outgoing control word
   );
@@ -36,11 +36,10 @@ begin
   process (pi_clk,pi_rst)
     
   begin
-
-    if (pi_rst) then
-      s_controlWord <= CONTROL_WORD_INIT;
-    elsif rising_edge (pi_clk) then
-      s_controlWord <= pi_controlWord; -- update register contents on falling clock edge
+      if (pi_rst) then
+        s_controlWord <= CONTROL_WORD_INIT;
+      elsif rising_edge (pi_clk) then
+        s_controlWord <= pi_controlWord when not pi_stall; -- update register contents on falling clock edge
     end if;
   end process;
 
