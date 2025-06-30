@@ -33,9 +33,9 @@ ghdl -a --std=08 Testbenches/RISCV/riubs_only_RISC_V_tb.vhdl
 ghdl -a --std=08 Testbenches/RISCV/riubs_only_RISC_V_tb2.vhdl
 ghdl -a --std=08 Testbenches/RISCV/riubs_only_RISC_V_tb3.vhdl
 #ghdl -e --std=08 riubs_only_RISC_V_tb
-ghdl -e --std=08 riubs_only_RISC_V_tb2
-#ghdl -e --std=08 riubs_only_RISC_V_tb3
+#ghdl -e --std=08 riubs_only_RISC_V_tb2
+ghdl -e --std=08 riubs_only_RISC_V_tb3
 #ghdl -r --std=08 riubs_only_RISC_V_tb --wave=riscv.ghw
-ghdl -r --std=08 riubs_only_RISC_V_tb2 --wave=riscv.ghw
-#ghdl -r --std=08 riubs_only_RISC_V_tb3 --wave=riscv.ghw
+#ghdl -r --std=08 riubs_only_RISC_V_tb2 --wave=riscv.ghw
+ghdl -r --std=08 riubs_only_RISC_V_tb3 --wave=riscv.ghw
 gtkwave riscv.ghw 

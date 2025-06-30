@@ -53,7 +53,7 @@ architecture structure of riubs_only_RISC_V is
   signal pc_decode, immediate, immediateImm, unsignedImm, jumpImm, branchImm, storeImm : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
 
   signal s_byp_rs1_sel, s_byp_rs2_sel : std_logic_vector(1 downto 0) := "00";
-  signal s_byp_rs1_MEM, s_byp_rs2_MEM : std_logic := '0';
+  signal s_byp_rs1_MEM, s_byp_rs2_MEM, s_stall : std_logic := '0';
 
   -- Execute
   signal controlWord_exec : controlword := control_word_init;
@@ -193,13 +193,13 @@ begin
                 branchImm when opcode = B_INS_OP else
                 storeImm when opcode = S_INS_OP;
 
-  s_byp_rs1_sel <= "00" when s_s = "00000" else
+  s_byp_rs1_sel <= "00" when (s_s = "00000") else
                    "01" when s_s = d_execute else
                    "10" when s_s = d_mem else
                    "11" when s_s = d_wb else
                    "00";
 
-  s_byp_rs2_sel <= "00" when s_s = "00000" else
+  s_byp_rs2_sel <= "00" when s_t = "00000" else
                    "01" when s_t = d_execute else
                    "10" when s_t = d_mem else
                    "11" when s_t = d_wb else
@@ -208,6 +208,8 @@ begin
   -- memory phase bypass selection                  
   s_byp_rs1_MEM <= '1' when (s_s = d_mem) AND (controlWord_mem.MEM_READ = '1') else '0';
   s_byp_rs2_MEM <= '1' when (s_t = d_mem) AND (controlWord_mem.MEM_READ = '1') else '0'; 
+
+  s_stall <= '1' when controlWord_exec.MEM_READ = '1' and ((d_execute /= "00000") and ((d_execute = s_s) or (d_execute = s_t))) else '0';
 
 -- end solution!!
 
