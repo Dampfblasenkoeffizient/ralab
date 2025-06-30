@@ -1,4 +1,4 @@
-# 02.07.2025 V9
+# Paul Riedel
 
 ghdl --clean
 ghdl -a --std=08 Packages/constant_package.vhdl
@@ -25,19 +25,10 @@ ghdl -a --std=08 Komponenten/Registerfile/*
 ghdl -a --std=08 Komponenten/Cache/*    
 ghdl -a --std=08 Komponenten/SignExtender/signExtension.vhdl
 ghdl -a --std=08 Komponenten/Multiplexer/*
-ghdl -a --std=08 Komponenten/RAM/*
 
 
-ghdl -a --std=08 RISCV/riubs_only_RISC_V.vhdl
-ghdl -a --std=08 Testbenches/RISCV/riubs_only_RISC_V_tb.vhdl
-ghdl -a --std=08 Testbenches/RISCV/riubs_only_RISC_V_tb2.vhdl
-ghdl -a --std=08 Testbenches/RISCV/riubs_only_RISC_V_tb3.vhdl
-#ghdl -e --std=08 riubs_only_RISC_V_tb
-ghdl -e --std=08 riubs_only_RISC_V_tb2
-ghdl -e --std=08 riubs_only_RISC_V_tb3
-#ghdl -r --std=08 riubs_only_RISC_V_tb --wave=riscv.ghw
-echo "---------------- \ running test bench 2 \ ----------------\n"
-ghdl -r --std=08 riubs_only_RISC_V_tb2
-echo "----------------\ running test bench 3 \ ----------------\n"
-ghdl -r --std=08 riubs_only_RISC_V_tb3
-gtkwave riscv.ghw 
+ghdl -a --std=08 RISCV/riu_only_RISC_V.vhdl
+ghdl -a --std=08 Testbenches/RISCV/riu_only_RISC_V_tb.vhdl
+ghdl -e --std=08 riu_only_RISC_V_tb
+ghdl -r --std=08 riu_only_RISC_V_tb --wave=reg.ghw
+gtkwave reg.ghw 

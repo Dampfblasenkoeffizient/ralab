@@ -1,4 +1,10 @@
--- Clara Heilig
+-- Laboratory RA solutions/versuch9
+-- Sommersemester 25
+-- Group Details
+-- Lab Date: 02.07.2025
+-- 1. Participant First and Last Name: Clara Heilig
+-- 2. Participant First and Last Name: Paul Riedel
+
 library ieee;
 use ieee.std_logic_1164.all;
 
