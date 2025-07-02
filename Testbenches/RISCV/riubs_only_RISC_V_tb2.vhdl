@@ -1,9 +1,9 @@
 -- Laboratory RA solutions/versuch9
 -- Sommersemester 25
 -- Group Details
--- Lab Date:
--- 1. Participant First and Last Name: 
--- 2. Participant First and Last Name:
+-- Lab Date: 02.07.2025
+-- 1. Participant First and Last Name: Clara Heilig
+-- 2. Participant First and Last Name: Paul Riedel
 
 -- ========================================================================
 -- Author:       Marcel Rieß
@@ -26,7 +26,7 @@ ARCHITECTURE structure OF riubs_only_RISC_V_tb2 IS
 
   CONSTANT PERIOD     : TIME := 10 ns;
   SIGNAL s_clk,s_clk2 : STD_LOGIC := '1';
-  SIGNAL s_rst        : STD_LOGIC;
+  SIGNAL s_rst        : STD_LOGIC := '0';
   SIGNAL cycle        : INTEGER := 0;
   SIGNAL test         : INTEGER := 0;
 

@@ -72,7 +72,7 @@ architecture structure of riubs_bp_only_RISC_V is
 
   -- debug
 
-  signal s_byp_rs1_sel, s_byp_rs2_sel : std_logic_vector (1 downto 0) := (others => '0');
+  signal s_byp_rs1_sel, s_byp_rs2_sel, s_byp_rs1_sel_ex, s_byp_rs2_sel_ex : std_logic_vector (1 downto 0) := (others => '0');
   signal s_rs1_AdrID, s_rs2_AdrID, s_dAdrEX, s_dAdrMEM, s_dAdrWB : std_logic_vector (REG_ADR_WIDTH -1 downto 0) := (others => '0');
 
   signal s_byp_rs1_MEM, s_byp_rs2_MEM : std_logic_vector (WORD_WIDTH -1 downto 0) := (others => '0');
@@ -165,29 +165,7 @@ begin
   d <= ir_data_out(11 downto 7);
   opcode <= ir_data_out(6 downto 0);
 
-  s_rs1_AdrID <= s;
-  s_byp_rs1_sel <= "01" when (s_rs1_AdrID = s_dAdrEX) else
-                   "10" when (s_rs1_AdrID = s_dAdrMEM) else
-                   "11" when (s_rs1_AdrID = s_dAdrWB) else
-                   "00";
-
-  s_byp_rs1_MEM <= s_readdataMEM when (s_rs1_AdrID = s_dAdrMEM) and (controlWord_mem.MEM_READ = '1')          
-                   else s_aluOutMEM;      
-
-  s_rs2_AdrID <= t;
-  s_byp_rs2_sel <= "01" when (s_rs2_AdrID = s_dAdrEX) else
-                   "10" when (s_rs2_AdrID = s_dAdrMEM) else
-                   "11" when (s_rs2_AdrID = s_dAdrWB) else
-                   "00";
-
-  s_byp_rs2_MEM <= s_readdataMEM when (s_rs2_AdrID = s_dAdrMEM) and (controlWord_mem.MEM_READ = '1')          
-                   else s_aluOutMEM;               
-
-  decoder_inst : entity work.decoder generic map(WORD_WIDTH)
-  port map(
-    pi_instruction => ir_data_out,
-    po_controlWord => controlWord_decode
-  );
+  
 
   signextender_inst : entity work.signExtension
   port map(
@@ -199,13 +177,37 @@ begin
     po_storeImm => storeImm
   );
 
-  immediate <=  immediateImm when opcode = I_INS_OP  or opcode = JALR_INS_OP else
+  immediate <=  immediateImm when opcode = I_INS_OP  or opcode = JALR_INS_OP or opcode = L_INS_OP else
                 unsignedImm when opcode = LUI_INS_OP or opcode = AUIPC_INS_OP else
                 jumpImm when opcode = JAL_INS_OP else
                 branchImm when opcode = B_INS_OP else
                 storeImm when opcode = S_INS_OP;
 
+  s_rs1_AdrID <= s;
+  s_byp_rs1_sel <= "00" when s_rs1_AdrID = "00000" else
+                   "01" when (s_rs1_AdrID = d_execute) and controlWord_exec.REG_WRITE = '1' else --s_dAdrEX
+                   "10" when (s_rs1_AdrID = d_mem) and controlWord_mem.REG_WRITE = '1' else -- s_dAdrMEM
+                   "11" when (s_rs1_AdrID = d_wb) and controlWord_wb.REG_WRITE = '1' else -- s_dAdrWB
+                   "00";
 
+  s_byp_rs1_MEM <= s_readdataMEM when (s_rs1_AdrID = s_dAdrMEM) and (controlWord_mem.MEM_READ = '1')          
+                   else s_aluOutMEM;      
+
+  s_rs2_AdrID <= t;
+  s_byp_rs2_sel <= "00" when s_rs2_AdrID = "00000" else
+                   "01" when (s_rs2_AdrID = d_execute) and controlWord_exec.REG_WRITE = '1' else
+                   "10" when (s_rs2_AdrID = d_mem) and controlWord_mem.REG_WRITE = '1' else
+                   "11" when (s_rs2_AdrID = d_wb) and controlWord_wb.REG_WRITE = '1' else
+                   "00";
+
+  s_byp_rs2_MEM <= s_readdataMEM when (s_rs2_AdrID = s_dAdrMEM) and (controlWord_mem.MEM_READ = '1')          
+                   else s_aluOutMEM;               
+
+  decoder_inst : entity work.decoder generic map(WORD_WIDTH)
+  port map(
+    pi_instruction => ir_data_out,
+    po_controlWord => controlWord_decode
+  );
 -- end solution!!
 
 
@@ -260,6 +262,22 @@ begin
     pi_data => pc_decode,
     po_data => pc_execute
   );
+
+  execute_register_byp_sel_1 : entity work.PipelineRegister generic map(2)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => flush,
+    pi_data => s_byp_rs1_sel,
+    po_data => s_byp_rs1_sel_ex
+  );
+
+  execute_register_byp_sel_2 : entity work.PipelineRegister generic map(2)
+  port map(
+    pi_clk => pi_clk,
+    pi_rst => flush,
+    pi_data => s_byp_rs2_sel,
+    po_data => s_byp_rs2_sel_ex
+  );
 -- end solution!!
 
 
@@ -297,9 +315,9 @@ begin
     po_res => opb
   );
 
-  FW_rs1_mux : entity work.fourWayMux generic map(WORD_WIDTH)
+  FW_rs1_mux : entity work.fourWayMux
   port map(
-    pi_sel => s_byp_rs1_sel,
+    pi_sel => s_byp_rs1_sel_ex,
     pi_0 => opa,
     pi_1 => s_byp_rs1_EX,
     pi_2 => s_byp_rs1_MEM,
@@ -307,15 +325,18 @@ begin
     po => s_ALUopa
   );
 
-  FW_rs2_mux : entity work.fourWayMux generic map(WORD_WIDTH)
+  FW_rs2_mux : entity work.fourWayMux
   port map(
-    pi_sel => s_byp_rs2_sel,
+    pi_sel => s_byp_rs2_sel_ex,
     pi_0 => opb,
     pi_1 => s_byp_rs2_EX,
     pi_2 => s_byp_rs2_MEM,
     pi_3 => s_byp_rs2_WB,
     po => s_ALUopb
   );
+
+  
+  
 
   alu : entity work.my_alu generic map(WORD_WIDTH, ALU_OPCODE_WIDTH)
   port map(
