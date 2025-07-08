@@ -24,8 +24,9 @@ entity riubs_only_RISC_V is
     pi_clk         : in    std_logic;
     pi_instruction : in    memory := (others => (others => '0'));
     po_registersOut : out   registerMemory := (others => (others => '0'));
-    po_debugdatamemory : out memory :=(others => (others => '0'))
-  );
+    po_debugdatamemory : out memory :=(others => (others => '0'));
+    po_debugInstr : out std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0')
+    );
 end entity riubs_only_RISC_V;
 
 architecture structure of riubs_only_RISC_V is
@@ -135,6 +136,9 @@ begin
     pi_instructionCache => pi_instruction,
     po_instruction => ir_data_in
   );
+
+  po_debugInstr <= ir_data_in; -- output of current instruction for debugging purposes
+
 -- end solution!!
 
 ---********************************************************************
@@ -213,12 +217,18 @@ begin
   --s_stall <= '1' when controlWord_exec.MEM_READ = '1' and ((d_execute /= "00000") and ((d_execute = s_s) or (d_execute = s_t))) and not (s_stall = '1' and rising_edge(pi_clk)) else '0';
   process (pi_clk, pi_rst)
   begin 
-    if pi_rst then 
-      s_stallFlag <= '0';
-    else if rising_edge(pi_clk) then
-      s_stallFlag <= '1' when controlWord_exec.MEM_READ = '1' and ((d_execute /= "00000") and ((d_execute = s_s) or (d_execute = s_t))) and not (s_stall = '1' and rising_edge(pi_clk)) else '0';
+	if pi_rst = '1' then
+    s_stallFlag <= '0';
+	elsif rising_edge(pi_clk) then
+    if (controlWord_exec.MEM_READ = '1') and 
+       (d_execute /= "00000") and 
+       ((d_execute = s_s) or (d_execute = s_t)) and 
+       (s_stall /= '1') then
+        s_stallFlag <= '1';
+    else
+        s_stallFlag <= '0';
     end if;
-    end if;
+	end if;
   end process;
   s_stall <= s_stallFlag;
 

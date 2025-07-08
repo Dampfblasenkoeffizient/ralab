@@ -16,8 +16,8 @@ architecture sub_alu_arch of sub_alu is
     signal s_nopb : std_logic_vector(DATA_WIDTH_GEN -1 downto 0);
     begin
         s_carry(0) <= '1';
+		  s_nopb <= not(pi_opb);
         sub_net : for i in 0 to DATA_WIDTH_GEN - 1 generate
-            s_nopb <= not(pi_opb);
             subber : entity work.fadd port map (pi_opa(i), s_nopb(i), s_carry(i), po_out(i), s_carry(i + 1));
         end generate;
         po_carry <= s_carry(DATA_WIDTH_GEN);

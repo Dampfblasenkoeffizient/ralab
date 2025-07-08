@@ -23,7 +23,12 @@ architecture behavior of PipelineRegister is
     begin
         process(pi_clk, pi_rst)
             begin
-                po_data <= (others => '0') when pi_rst = '1' else
-                            pi_data when rising_edge(pi_clk) and pi_stall = '0';
+					if pi_rst = '1' then
+						po_data <= (others => '0');
+					else 
+						if rising_edge(pi_clk) and pi_stall = '0' then
+							po_data <= pi_data;
+						end if;
+					end if;
         end process;    
 end architecture;    

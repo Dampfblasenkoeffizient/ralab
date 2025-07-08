@@ -36,10 +36,10 @@ begin
   process (pi_clk,pi_rst)
     
   begin
-      if (pi_rst) then
+      if (pi_rst = '1') then
         s_controlWord <= CONTROL_WORD_INIT;
-      elsif rising_edge (pi_clk) then
-        s_controlWord <= pi_controlWord when not pi_stall; -- update register contents on falling clock edge
+      elsif rising_edge (pi_clk) and pi_stall = '0' then
+        s_controlWord <= pi_controlWord; -- update register contents on falling clock edge
     end if;
   end process;
 
