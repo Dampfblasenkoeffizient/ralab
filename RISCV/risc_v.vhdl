@@ -47,21 +47,50 @@ begin
     HEX3 <= seg_patterns(3);
     HEX4 <= seg_patterns(4);
     HEX5 <= seg_patterns(5);
+	 
+	 --- BSP Code
 
-    s_instructions(1) <= Asm2Std("ADDI", 1, 0, 9);
-    s_instructions(2) <= Asm2Std("ADDI", 2, 0, 8);
-    s_instructions(3) <= Asm2Std("OR", 10, 1, 2);
-    s_instructions(4) <= Asm2Std("ADD", 8, 1, 2);
-    s_instructions(5) <= Asm2Std("SUB", 11, 1, 2);
-    s_instructions(6) <= Asm2Std("SUB", 12, 2, 1);
-    s_instructions(7) <= Asm2Std("ADD", 12, 2, 8);
-    s_instructions(8) <= Asm2Std("SUB", 12, 2, 1);
-    s_instructions(9) <= Asm2Std("AND", 1, 2, 1);
-    s_instructions(10) <= Asm2Std("XOR", 12, 1, 2);
-    s_instructions(11) <= Asm2Std("LUI", 13, 8, 0);
-    s_instructions(12) <= Asm2Std("LUI", 13, 29, 0);
-    s_instructions(13) <= Asm2Std("AUIPC", 14, 1, 0);
-    s_instructions(14) <= Asm2Std("AUIPC", 14, 1, 0);
+    -- s_instructions(1) <= Asm2Std("ADDI", 1, 0, 9);
+    -- s_instructions(2) <= Asm2Std("ADDI", 2, 0, 8);
+    -- s_instructions(3) <= Asm2Std("OR", 10, 1, 2);
+    -- s_instructions(4) <= Asm2Std("ADD", 8, 1, 2);
+    -- s_instructions(5) <= Asm2Std("SUB", 11, 1, 2);
+    -- s_instructions(6) <= Asm2Std("SUB", 12, 2, 1);
+    -- s_instructions(7) <= Asm2Std("ADD", 12, 2, 8);
+    -- s_instructions(8) <= Asm2Std("SUB", 12, 2, 1);
+    -- s_instructions(9) <= Asm2Std("AND", 1, 2, 1);
+    -- s_instructions(10) <= Asm2Std("XOR", 12, 1, 2);
+    -- s_instructions(11) <= Asm2Std("LUI", 13, 8, 0);
+    -- s_instructions(12) <= Asm2Std("LUI", 13, 29, 0);
+    -- s_instructions(13) <= Asm2Std("AUIPC", 14, 1, 0);
+    -- s_instructions(14) <= Asm2Std("AUIPC", 14, 1, 0);
+	 
+	 
+	 --- FIB
+	 
+	 s_instructions(1) <= Asm2Std("ADDI", 5, 0, 8);
+    s_instructions(2) <= Asm2Std("ADDI", 6, 0, 0);
+    s_instructions(3) <= Asm2Std("ADDI", 7, 0, 1);
+    s_instructions(4) <= Asm2Std("ADDI", 10, 0, 10);
+    s_instructions(5) <= Asm2Std("ADDI", 29, 0, 2);
+	 
+    s_instructions(6) <= Asm2Std("SW", 6, 0, 0);
+    s_instructions(7) <= Asm2Std("SW", 7, 4, 0);
+	 
+	 -- for
+	 
+    s_instructions(8) <= Asm2Std("BEQ", 29, 10, 32); -- 32 => end
+    s_instructions(9) <= Asm2Std("ADDI", 29, 29, 1);
+    s_instructions(10) <= Asm2Std("ADD", 28, 6, 7);
+    s_instructions(11) <= Asm2Std("SW", 28, 0, 5);
+    s_instructions(12) <= Asm2Std("ADD", 6, 7, 0);
+    s_instructions(13) <= Asm2Std("ADD", 7, 28, 0);
+    s_instructions(14) <= Asm2Std("ADDI", 5, 5, 4);
+	 s_instructions(15) <= Asm2Std("JAL", 0, -28, 0); -- -28 => for
+	 
+	 --end
+	 
+	 s_instructions(16) <= Asm2Std("ADDI", 0, 0, 0);
 
 
 
